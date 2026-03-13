@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>我的订单 - 校园二手商城</title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: storeNav('orders', ${loggedIn})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <section class="dashboard-hero rounded-4 p-4 p-md-5 mb-4">
+        <div class="section-head">
+            <div>
+                <div class="hero-chip hero-chip--dark">订单中心</div>
+                <h1 class="market-title mb-3">统一管理买入和卖出的订单</h1>
+                <p class="market-copy mb-0">在一个页面里查看订单状态、交易对象、金额、见面信息和后续操作，不再分散跳转。</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div class="empty-state" th:if="${orders.isEmpty()}">
+        你还没有订单记录，去商品市场看看是否有想买的商品。
+    </div>
+
+    <div class="d-grid gap-3" th:if="${!orders.isEmpty()}">
+        <div class="card panel-card border-0 shadow-sm order-card" th:each="order : ${orders}">
+            <div class="card-body p-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+                    <div>
+                        <div class="fw-semibold mb-1">订单号：<span th:text="${order.orderNo}"></span></div>
+                        <div class="small text-secondary">
+                            <span th:text="${order.buyerSide ? '我是买家' : '我是卖家'}"></span>
+                            <span class="mx-2">|</span>
+                            <span th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                        </div>
+                    </div>
+                    <span class="badge order-badge" th:text="${order.statusLabel}"></span>
+                </div>
+
+                <div class="row g-3 align-items-center">
+                    <div class="col-lg-7">
+                        <div class="d-flex align-items-center gap-3 order-goods-row">
+                            <img th:src="${order.goodsCoverImageUrl != null ? order.goodsCoverImageUrl : '/images/default-goods.svg'}"
+                                 class="list-thumb"
+                                 alt="商品图片">
+                            <div>
+                                <div class="fw-semibold" th:text="${order.goodsTitle}"></div>
+                                <div class="small text-secondary" th:if="${order.buyerSide}">卖家：<span th:text="${order.sellerName}"></span></div>
+                                <div class="small text-secondary" th:if="${order.sellerSide}">买家：<span th:text="${order.buyerName}"></span></div>
+                                <div class="small text-secondary" th:if="${order.buyerRemark != null and order.buyerRemark != ''}">买家备注：<span th:text="${order.buyerRemark}"></span></div>
+                                <div class="small text-secondary" th:if="${order.meetupTime != null}">见面时间：<span th:text="${#temporals.format(order.meetupTime, 'yyyy-MM-dd HH:mm')}"></span></div>
+                                <div class="small text-secondary" th:if="${order.meetupLocation != null and order.meetupLocation != ''}">见面地点：<span th:text="${order.meetupLocation}"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="d-flex justify-content-lg-end align-items-center gap-2 flex-wrap order-actions">
+                            <div class="price-text me-lg-2" th:text="${'¥' + order.amount}"></div>
+                            <a class="btn btn-sm btn-outline-secondary" th:href="@{'/goods/' + ${order.goodsId}}">商品详情</a>
+                            <a class="btn btn-sm btn-outline-primary" th:href="@{'/orders/' + ${order.orderId}}">订单详情</a>
+
+                            <form th:if="${order.buyerSide and order.status == 'PENDING'}" method="post" th:action="@{'/orders/' + ${order.orderId} + '/cancel'}">
+                                <button class="btn btn-sm btn-outline-danger" type="submit">取消订单</button>
+                            </form>
+
+                            <form th:if="${order.sellerSide and order.status == 'PENDING'}" method="post" th:action="@{'/orders/' + ${order.orderId} + '/seller-confirm'}">
+                                <button class="btn btn-sm btn-primary" type="submit">确认接单</button>
+                            </form>
+
+                            <form th:if="${order.buyerSide and order.status == 'SELLER_CONFIRMED'}" method="post" th:action="@{'/orders/' + ${order.orderId} + '/buyer-complete'}">
+                                <button class="btn btn-sm btn-success" type="submit">确认完成</button>
+                            </form>
+
+                            <a th:if="${order.status == 'COMPLETED' and (reviewedOrderIds == null or !reviewedOrderIds.contains(order.orderId))}"
+                               class="btn btn-sm btn-outline-primary"
+                               th:href="@{'/orders/' + ${order.orderId} + '/review'}">去评价</a>
+                            <a th:if="${order.status == 'COMPLETED' and reviewedOrderIds != null and reviewedOrderIds.contains(order.orderId)}"
+                               class="btn btn-sm btn-outline-success"
+                               th:href="@{/reviews/my}">已评价</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>商品详情 - 校园二手商城</title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: storeNav('goods', ${loggedIn})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <section class="detail-shell row g-4 align-items-start">
+        <div class="col-lg-7">
+            <div class="card panel-card border-0 shadow-sm overflow-hidden">
+                <div class="card-body p-3 p-md-4">
+                    <img th:src="${goods.imageUrls != null and !goods.imageUrls.isEmpty() ? goods.imageUrls.get(0) : '/images/default-goods.svg'}"
+                         id="mainGoodsImage"
+                         class="img-fluid detail-cover rounded-4"
+                         alt="商品主图">
+                    <div class="d-flex flex-wrap gap-2 mt-3" th:if="${goods.imageUrls != null and !goods.imageUrls.isEmpty()}">
+                        <img th:each="imageUrl : ${goods.imageUrls}"
+                             th:src="${imageUrl}"
+                             class="thumb-image thumb-clickable"
+                             th:attr="data-full=${imageUrl}"
+                             alt="商品缩略图">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card panel-card border-0 shadow-sm mt-4">
+                <div class="card-body p-4 p-md-5">
+                    <div class="section-head mb-3">
+                        <div>
+                            <h2 class="section-title mb-1">商品详情</h2>
+                            <p class="section-subtitle mb-0">先确认成色、描述和卖家信息，再决定是否联系或下单。</p>
+                        </div>
+                    </div>
+                    <div class="detail-description" th:text="${goods.description != null ? goods.description : '卖家暂未填写商品描述。'}"></div>
+                </div>
+            </div>
+
+            <div class="card panel-card border-0 shadow-sm mt-4">
+                <div class="card-body p-4">
+                    <h3 class="section-title mb-3">买家评价</h3>
+                    <div class="empty-state" th:if="${reviews == null or reviews.isEmpty()}">暂时还没有评价。</div>
+                    <div class="d-grid gap-3" th:if="${reviews != null and !reviews.isEmpty()}">
+                        <div class="review-card" th:each="review : ${reviews}">
+                            <div class="d-flex justify-content-between align-items-center gap-2">
+                                <div class="fw-semibold" th:text="${review.reviewerName + ' 评价 ' + review.revieweeName}"></div>
+                                <span class="badge text-bg-primary" th:text="${review.score + ' 分'}"></span>
+                            </div>
+                            <div class="small text-secondary mt-1" th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd HH:mm')}"></div>
+                            <div class="mt-2" th:text="${review.content != null ? review.content : '该评价未填写文字内容。'}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card panel-card border-0 shadow-sm detail-summary-card">
+                <div class="card-body p-4 p-md-5">
+                    <div class="detail-badges d-flex flex-wrap gap-2 mb-3">
+                        <span class="badge text-bg-light" th:text="${goods.categoryName}"></span>
+                        <span class="badge text-bg-light" th:text="${goods.conditionLevel}"></span>
+                        <span class="badge"
+                              th:classappend="${goods.status == 'ON_SHELF' ? ' text-bg-success' : ' text-bg-secondary'}"
+                              th:text="${goods.status == 'ON_SHELF' ? '在售' : '已下架'}"></span>
+                    </div>
+
+                    <h1 class="detail-title mb-2" th:text="${goods.title}"></h1>
+                    <div class="price-text detail-price-block mb-4" th:text="${'¥' + goods.price}"></div>
+
+                    <div class="info-list detail-info-list mb-4">
+                        <p><strong>卖家</strong><span th:text="${goods.sellerName}"></span></p>
+                        <p><strong>联系方式</strong><span th:text="${goods.contactInfo}"></span></p>
+                    </div>
+
+                    <div class="alert alert-info" th:if="${sellerView}">
+                        <div><strong>审核状态：</strong><span th:text="${goods.auditStatusLabel}"></span></div>
+                        <div><strong>审核说明：</strong><span th:text="${goods.auditNote != null and goods.auditNote != '' ? goods.auditNote : '-'}"></span></div>
+                        <div th:if="${goods.auditTime != null}">
+                            <strong>审核时间：</strong>
+                            <span th:text="${#temporals.format(goods.auditTime, 'yyyy-MM-dd HH:mm')}"></span>
+                        </div>
+                    </div>
+
+                    <div class="detail-actions d-grid gap-2">
+                        <form th:if="${loggedIn}" method="post" th:action="@{/favorites/toggle}">
+                            <input type="hidden" name="goodsId" th:value="${goods.id}">
+                            <button class="btn w-100"
+                                    th:classappend="${favorited ? ' btn-outline-danger' : ' btn-outline-secondary'}"
+                                    type="submit"
+                                    th:text="${favorited ? '取消收藏' : '加入收藏'}"></button>
+                        </form>
+                        <a th:if="${!loggedIn}" class="btn btn-outline-secondary w-100" th:href="@{/login}">登录后收藏</a>
+
+                        <form method="post" th:action="@{/cart/add}">
+                            <input type="hidden" name="goodsId" th:value="${goods.id}">
+                            <button class="btn btn-primary w-100"
+                                    type="submit"
+                                    th:disabled="${goods.status != 'ON_SHELF'}"
+                                    th:text="${goods.status == 'ON_SHELF' ? '加入购物车' : '当前不可购买'}"></button>
+                        </form>
+                        <a class="btn btn-outline-primary w-100" th:href="@{'/chat?peerUserId=' + ${goods.sellerId}}">联系卖家</a>
+                        <a class="btn btn-outline-danger w-100" th:href="@{'/reports/create?targetType=GOODS&targetId=' + ${goods.id}}">举报商品</a>
+                        <a class="btn btn-outline-secondary w-100" th:href="@{/goods}">返回商品市场</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<script>
+    (function () {
+        const main = document.getElementById('mainGoodsImage');
+        if (!main) return;
+        document.querySelectorAll('.thumb-clickable').forEach((thumb) => {
+            thumb.addEventListener('click', () => {
+                const target = thumb.getAttribute('data-full');
+                if (target) {
+                    main.setAttribute('src', target);
+                }
+            });
+        });
+    })();
+</script>
+</body>
+</html>

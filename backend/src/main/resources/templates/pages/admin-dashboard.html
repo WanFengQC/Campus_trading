@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>后台看板 - 校园二手商城</title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: adminNav('dashboard', ${adminName})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <section class="admin-hero rounded-4 p-4 p-md-5 mb-4">
+        <div class="section-head">
+            <div>
+                <div class="hero-chip hero-chip--dark">后台看板</div>
+                <h1 class="market-title mb-3">把核心运营数据集中到一个入口查看</h1>
+                <p class="market-copy mb-0">用户、商品、订单、租赁、捐赠和举报都在后台统一管理，便于演示完整业务闭环。</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="row g-3 admin-stat-grid">
+        <div class="col-md-6 col-xl-3">
+            <div class="card panel-card border-0 shadow-sm h-100 admin-stat-card">
+                <div class="card-body">
+                    <div class="small text-secondary">用户总数</div>
+                    <div class="fs-2 fw-bold" th:text="${dashboard.totalUserCount}"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card panel-card border-0 shadow-sm h-100 admin-stat-card">
+                <div class="card-body">
+                    <div class="small text-secondary">在售商品</div>
+                    <div class="fs-2 fw-bold" th:text="${dashboard.onShelfGoodsCount}"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card panel-card border-0 shadow-sm h-100 admin-stat-card">
+                <div class="card-body">
+                    <div class="small text-secondary">待处理订单</div>
+                    <div class="fs-2 fw-bold" th:text="${dashboard.pendingOrderCount}"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card panel-card border-0 shadow-sm h-100 admin-stat-card">
+                <div class="card-body">
+                    <div class="small text-secondary">活跃租赁</div>
+                    <div class="fs-2 fw-bold" th:text="${dashboard.activeRentalCount}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mt-1">
+        <div class="col-lg-4">
+            <div class="card panel-card border-0 shadow-sm h-100 admin-stat-card">
+                <div class="card-body">
+                    <div class="small text-secondary">可领取捐赠物品</div>
+                    <div class="fs-2 fw-bold" th:text="${dashboard.availableDonationCount}"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="card panel-card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h2 class="section-title mb-3">快速处理入口</h2>
+                    <div class="admin-quick-grid">
+                        <a class="account-link-card" th:href="@{/admin/users}">用户审核与管理</a>
+                        <a class="account-link-card" th:href="@{/admin/categories}">分类管理</a>
+                        <a class="account-link-card" th:href="@{/admin/goods}">商品审核与管理</a>
+                        <a class="account-link-card" th:href="@{/admin/orders}">订单管理</a>
+                        <a class="account-link-card" th:href="@{/admin/rentals}">租赁管理</a>
+                        <a class="account-link-card" th:href="@{/admin/donations}">捐赠管理</a>
+                        <a class="account-link-card" th:href="@{/admin/reports}">举报处理</a>
+                        <a class="account-link-card" th:href="@{/admin/notices}">公告管理</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

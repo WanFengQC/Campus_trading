@@ -1,0 +1,11 @@
+ALTER TABLE trade_order
+    ADD COLUMN IF NOT EXISTS amount DECIMAL(10, 2) NOT NULL DEFAULT 0 AFTER seller_id,
+    ADD COLUMN IF NOT EXISTS buyer_remark VARCHAR(255) NULL AFTER amount;
+
+CREATE TABLE IF NOT EXISTS cart (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    goods_id BIGINT NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_cart_user_goods (user_id, goods_id)
+);

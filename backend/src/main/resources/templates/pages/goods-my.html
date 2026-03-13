@@ -1,0 +1,76 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>闂佺懓鐡ㄩ崹鐟扳枔閹达箑鐤柛鈩冾殕閹?- 闂佸搫绉埀顒冩珪閻ゎ喖霉濠婂啯婀板褎绮嶇粋宥夊Χ閸℃﹩娼ㄥΔ鐘靛仜閸熻儻銇?/title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: storeNav('goods', ${loggedIn})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <h2 class="section-title mb-3">闂佺懓鐡ㄩ崹浣冦亹閸屾粍鏆滈柛鎰典簼閻ｉ亶鏌涢悢閿嬵棞闁?/h2>
+
+    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div class="table-responsive bg-white rounded-3 shadow-sm p-2">
+        <table class="table align-middle mb-0">
+            <thead>
+            <tr>
+                <th>闂佸摜鍠庡Λ妤呭箹?/th>
+                <th>婵炲濞€閺€閬嶆偋?/th>
+                <th>闂佺懓鐡ㄩ崝妯荤珶?/th>
+                <th>婵炴垶鎸搁敃銉╂倶閿曞倹鍋愰柤鍝ヮ暯閸?/th>
+                <th>闁诲骸鍘滈崜婵嬫偋閹惰姤鍋愰柤鍝ヮ暯閸?/th>
+                <th>闁诲骸鍘滈崜婵嬫偋閾忣偄绶為柛銉ｅ妽閺?/th>
+                <th class="text-end">闂佺懓鐏濈粔宕囩礊?/th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${items.isEmpty()}">
+                <td colspan="7" class="text-center text-secondary py-4">婵炶揪绲挎慨鍓ф崲閺囩偐鏌﹂柍鈺佸暞缁犳帡鏌涘▎鎰仴缂佹梻鍏樺畷顖炲幢濡や焦鍎岄梺鎸庣☉閼活垶宕㈠☉銏犲偍閻犲洦褰冪徊娲偨椤栨艾鏆曠紒鏂跨摠缁嬪顢旈崟顒€鍓梺?/td>
+            </tr>
+            <tr th:each="item : ${items}">
+                <td>
+                    <div class="d-flex align-items-center gap-2">
+                        <img th:src="${item.coverImageUrl != null ? item.coverImageUrl : '/images/default-goods.svg'}" class="list-thumb" alt="商品封面">
+                        <div>
+                            <div class="fw-semibold" th:text="${item.title}"></div>
+                            <div class="small text-secondary" th:text="${item.categoryName}"></div>
+                        </div>
+                    </div>
+                </td>
+                <td class="price-text" th:text="${'婵? + item.price}"></td>
+                <td th:text="${item.conditionLevel}"></td>
+                <td>
+                    <span class="badge"
+                          th:classappend="${item.status == 'ON_SHELF' ? ' text-bg-success' : ' text-bg-secondary'}"
+                          th:text="${item.status == 'ON_SHELF' ? '闂侀潻璐熼崝宀勫极? : '閻庤鐡曞鎾剁箔閸涙潙鍑?}"></span>
+                </td>
+                <td>
+                    <span class="badge"
+                          th:classappend="${item.auditStatus == 'APPROVED' ? ' text-bg-success' : (item.auditStatus == 'REJECTED' ? ' text-bg-danger' : ' text-bg-warning')}"
+                          th:text="${item.auditStatusLabel != null ? item.auditStatusLabel : '闂佸搫鐗滄禍鐐烘偂?}"></span>
+                </td>
+                <td>
+                    <div th:text="${item.auditNote != null and item.auditNote != '' ? item.auditNote : '-'}"></div>
+                    <div class="small text-secondary" th:if="${item.auditTime != null}"
+                         th:text="${#temporals.format(item.auditTime, 'yyyy-MM-dd HH:mm')}"></div>
+                </td>
+                <td class="text-end">
+                    <a class="btn btn-sm btn-outline-primary" th:href="@{'/goods/' + ${item.id}}">闁荤姴娴勯梽鍕磿?/a>
+                    <a class="btn btn-sm btn-outline-secondary" th:href="@{'/goods/' + ${item.id} + '/edit'}">缂傚倸鍊归悧鐐垫?/a>
+                    <form class="d-inline" method="post" th:action="@{'/goods/' + ${item.id} + '/off-shelf'}">
+                        <button class="btn btn-sm btn-outline-danger" type="submit" th:disabled="${item.status != 'ON_SHELF'}">婵炴垶鎸搁鍡涙倶?/button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

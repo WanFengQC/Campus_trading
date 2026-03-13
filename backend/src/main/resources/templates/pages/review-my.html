@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>闁瑰瓨鍨瑰▓鎴犳嫚閸曨亞骞?- 闁哄秮鈧櫕鐤ù婊冩湰婢ф粍绂嶉妶鍡橆潨妤犵偛鍟胯ぐ?/title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: storeNav('account', ${loggedIn})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <h2 class="section-title mb-3">闁瑰瓨鍨甸崯鎾绘儍閸曨喚妲戝ù?/h2>
+    <div class="empty-state mb-3" th:if="${writtenReviews.isEmpty()}">濞达絿濮剧换鏇炩柦閳╁啯绠掗柛鎰懆缁诲啰鎷犻崟顏嗗箚闁?/div>
+    <div class="d-grid gap-3 mb-4" th:if="${!writtenReviews.isEmpty()}">
+        <div class="card panel-card border-0 shadow-sm" th:each="item : ${writtenReviews}">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="fw-semibold" th:text="${item.goodsTitle}"></div>
+                    <span class="badge text-bg-primary" th:text="${item.score + ' 闁?}"></span>
+                </div>
+                <div class="small text-secondary mb-1" th:text="${'閻犲洤瀚悳顖溾偓鐢殿攰閽栧嫰鏁? + item.revieweeName}"></div>
+                <div class="small text-secondary mb-1"
+                     th:text="${'闁哄啫鐖煎Λ鍧楁晬? + #temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm')}"></div>
+                <div th:text="${item.content != null ? item.content : '闁挎稑鐗婂Λ銈囨嫚閸曨亞骞嗛柛鎰噹椤旀劙鏁?}"></div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="section-title mb-3">闁瑰瓨鍨堕弫褰掑礆閹殿喗鐣遍悹鍥у閻?/h2>
+    <div class="empty-state" th:if="${receivedReviews.isEmpty()}">濞达絿濮剧换鏇炩柦閳╁啯绠掗柡鈧捄鍝勭厒閻犲洤瀚悳顖炲Υ?/div>
+    <div class="d-grid gap-3" th:if="${!receivedReviews.isEmpty()}">
+        <div class="card panel-card border-0 shadow-sm" th:each="item : ${receivedReviews}">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="fw-semibold" th:text="${item.goodsTitle}"></div>
+                    <span class="badge text-bg-success" th:text="${item.score + ' 闁?}"></span>
+                </div>
+                <div class="small text-secondary mb-1" th:text="${'閻犲洤瀚悳顖涚閻氬绐? + item.reviewerName}"></div>
+                <div class="small text-secondary mb-1"
+                     th:text="${'闁哄啫鐖煎Λ鍧楁晬? + #temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm')}"></div>
+                <div th:text="${item.content != null ? item.content : '闁挎稑鐗婂Λ銈囨嫚閸曨亞骞嗛柛鎰噹椤旀劙鏁?}"></div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

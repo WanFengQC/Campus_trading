@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>閻犱降鍨瑰畷鐔虹不閿涘嫭鍊?- 闁告艾楠歌ぐ鎾箳瑜嶉崺妤呭矗?/title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: adminNav('orders', ${adminName})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <h2 class="section-title mb-3">閻犱降鍨瑰畷鐔虹不閿涘嫭鍊?/h2>
+    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div class="card panel-card border-0 shadow-sm mb-3">
+        <div class="card-body">
+            <form class="row g-2" method="get" th:action="@{/admin/orders}">
+                <div class="col-md-10">
+                    <select class="form-select" name="status">
+                        <option value="">闁稿繈鍔戦崕鎾偐閼哥鍋?/option>
+                        <option value="PENDING" th:selected="${status == 'PENDING'}">鐎垫澘鎳庡畷鐘碘偓鐟板閳ユ鎷?/option>
+                        <option value="SELLER_CONFIRMED" th:selected="${status == 'SELLER_CONFIRMED'}">鐎垫澘鎳嶉幏杈┾偓鐟板閳ユ鎷嬮妶鍡樻毆閻?/option>
+                        <option value="COMPLETED" th:selected="${status == 'COMPLETED'}">鐎瑰憡褰冮悾顒勫箣?/option>
+                        <option value="CANCELLED" th:selected="${status == 'CANCELLED'}">鐎瑰憡褰冭ぐ鍥р槈?/option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button class="btn btn-primary" type="submit">缂佹稒鐩埀?/button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive bg-white rounded-3 shadow-sm p-2">
+        <table class="table align-middle mb-0">
+            <thead>
+            <tr>
+                <th>閻犱降鍨瑰畷鐔煎矗?/th>
+                <th>闁哥喎妫楅幖?/th>
+                <th>濞戞梹婢橀?/th>
+                <th>闁告鐗曢?/th>
+                <th>闂佸弶鍨块·?/th>
+                <th>闁绘鍩栭埀?/th>
+                <th>闁哄啫鐖煎Λ?/th>
+                <th class="text-end">闁瑰灝绉崇紞?/th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${orders.isEmpty()}">
+                <td colspan="8" class="text-center text-secondary py-4">闁哄棗鍊瑰Λ銈囨媼閵忕姴绀?/td>
+            </tr>
+            <tr th:each="item : ${orders}">
+                <td th:text="${item.orderNo}"></td>
+                <td>
+                    <div class="fw-semibold" th:text="${item.goodsTitle}"></div>
+                    <a class="small" th:href="@{'/goods/' + ${item.goodsId}}">闁哄被鍎冲﹢鍛村疮閸℃鎯?/a>
+                    <div class="small text-secondary" th:if="${item.meetupTime != null}">
+                        濡ょ姴鐭侀幓锝夊籍閸洘锛熼柨?span th:text="${#temporals.format(item.meetupTime, 'yyyy-MM-dd HH:mm')}"></span>
+                    </div>
+                    <div class="small text-secondary" th:if="${item.meetupLocation != null and item.meetupLocation != ''}">
+                        濡ょ姴鐭侀幓锝夊捶閹殿喖浠柨?span th:text="${item.meetupLocation}"></span>
+                    </div>
+                    <div class="small text-secondary" th:if="${item.meetupNote != null and item.meetupNote != ''}">
+                        濡ょ姴鐭侀幓锝囨嫚鐎涙ɑ顫栭柨?span th:text="${item.meetupNote}"></span>
+                    </div>
+                </td>
+                <td th:text="${item.buyerName}"></td>
+                <td th:text="${item.sellerName}"></td>
+                <td class="price-text" th:text="${'濡? + item.amount}"></td>
+                <td><span class="badge order-badge" th:text="${item.statusLabel}"></span></td>
+                <td th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                <td class="text-end">
+                    <form class="d-inline" method="post" th:action="@{'/admin/orders/' + ${item.orderId} + '/status'}">
+                        <select class="form-select form-select-sm d-inline-block" style="width: 170px;" name="status">
+                            <option value="PENDING" th:selected="${item.status == 'PENDING'}">鐎垫澘鎳庡畷鐘碘偓鐟板閳ユ鎷?/option>
+                            <option value="SELLER_CONFIRMED" th:selected="${item.status == 'SELLER_CONFIRMED'}">鐎垫澘鎳嶉幏杈┾偓鐟板閳ユ鎷嬮妶鍡樻毆閻?/option>
+                            <option value="COMPLETED" th:selected="${item.status == 'COMPLETED'}">鐎瑰憡褰冮悾顒勫箣?/option>
+                            <option value="CANCELLED" th:selected="${item.status == 'CANCELLED'}">鐎瑰憡褰冭ぐ鍥р槈?/option>
+                        </select>
+                        <button class="btn btn-sm btn-outline-primary" type="submit">闁哄洤鐡ㄩ弻?/button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

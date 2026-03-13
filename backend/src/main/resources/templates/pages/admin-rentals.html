@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>缂佸鍠曠粊锔剧不閿涘嫭鍊?- 闁告艾楠歌ぐ鎾箳瑜嶉崺妤呭矗?/title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: adminNav('rentals', ${adminName})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <h2 class="section-title mb-3">缂佸鍠曠粊锔炬媼閵忕姴绀嬬紒鐙呯磿閹?/h2>
+    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div class="card panel-card border-0 shadow-sm mb-3">
+        <div class="card-body">
+            <form class="row g-2" method="get" th:action="@{/admin/rentals}">
+                <div class="col-md-10">
+                    <select class="form-select" name="status">
+                        <option value="">闁稿繈鍔戦崕鎾偐閼哥鍋?/option>
+                        <option value="PENDING" th:selected="${status == 'PENDING'}">鐎垫澘鎳庨崵顓犵矓閻斿憡鐓欑痪顓у枦椤?/option>
+                        <option value="ACTIVE" th:selected="${status == 'ACTIVE'}">缂佸鍠曠粊锔芥交濞戞粠鏀藉☉?/option>
+                        <option value="COMPLETED" th:selected="${status == 'COMPLETED'}">鐎瑰憡褰冮悾顒勫箣?/option>
+                        <option value="CANCELLED" th:selected="${status == 'CANCELLED'}">鐎瑰憡褰冭ぐ鍥р槈?/option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button class="btn btn-primary" type="submit">缂佹稒鐩埀?/button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive bg-white rounded-3 shadow-sm p-2">
+        <table class="table align-middle mb-0">
+            <thead>
+            <tr>
+                <th>閻犱降鍨瑰畷鐔煎矗?/th>
+                <th>缂佸鍠曠粊锕傛偋閳轰焦鎯?/th>
+                <th>闁逛絻娉曢～銈夊棘?/th>
+                <th>闁告垼娅ｉ～銈夊棘?/th>
+                <th>缂佸鍠愬﹢?/th>
+                <th>闂佸弶鍨块·?/th>
+                <th>闁绘鍩栭埀?/th>
+                <th>闁告帗绋戠紓鎾诲籍閸洘锛?/th>
+                <th class="text-end">闁瑰灝绉崇紞?/th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${orders.isEmpty()}">
+                <td colspan="9" class="text-center text-secondary py-4">闁哄棗鍊瑰Λ銈囩矓閻旇崵銈﹂悹浣靛灩瀹?/td>
+            </tr>
+            <tr th:each="item : ${orders}">
+                <td th:text="${item.orderNo}"></td>
+                <td>
+                    <div class="fw-semibold" th:text="${item.rentalTitle}"></div>
+                    <a class="small" th:href="@{'/rentals/' + ${item.rentalItemId}}">闁哄被鍎冲﹢鍛矓閻旇崵銈﹂悹鍥烽檮閸?/a>
+                </td>
+                <td th:text="${item.renterName}"></td>
+                <td th:text="${item.ownerName}"></td>
+                <td>
+                    <div th:text="${item.startDate}"></div>
+                    <div class="small text-secondary" th:text="${'闁?' + item.endDate}"></div>
+                </td>
+                <td class="price-text" th:text="${'濡? + item.totalAmount}"></td>
+                <td><span class="badge order-badge" th:text="${item.statusLabel}"></span></td>
+                <td th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                <td class="text-end">
+                    <form class="d-inline" method="post" th:action="@{'/admin/rentals/' + ${item.orderId} + '/status'}">
+                        <select class="form-select form-select-sm d-inline-block" style="width: 170px;" name="status">
+                            <option value="PENDING" th:selected="${item.status == 'PENDING'}">鐎垫澘鎳庨崵顓犵矓閻斿憡鐓欑痪顓у枦椤?/option>
+                            <option value="ACTIVE" th:selected="${item.status == 'ACTIVE'}">缂佸鍠曠粊锔芥交濞戞粠鏀藉☉?/option>
+                            <option value="COMPLETED" th:selected="${item.status == 'COMPLETED'}">鐎瑰憡褰冮悾顒勫箣?/option>
+                            <option value="CANCELLED" th:selected="${item.status == 'CANCELLED'}">鐎瑰憡褰冭ぐ鍥р槈?/option>
+                        </select>
+                        <button class="btn btn-sm btn-outline-primary" type="submit">闁哄洤鐡ㄩ弻?/button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

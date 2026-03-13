@@ -1,0 +1,140 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>鍟嗗搧甯傚満 - 鏍″洯浜屾墜鍟嗗煄</title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: storeNav('goods', ${loggedIn})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <section class="market-hero rounded-4 p-4 p-md-5 mb-4">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-7">
+                <div class="hero-chip hero-chip--dark">鍟嗗搧甯傚満</div>
+                <h1 class="market-title mb-3">鍦ㄦ牎鍥噷鏇村揩鎵惧埌鍊煎緱涔扮殑浜屾墜鍟嗗搧</h1>
+                <p class="market-copy mb-0">
+                    鎶婂晢鍝佹悳绱€佹垚鑹茬瓫閫夈€佷环鏍兼瘮杈冦€佹敹钘忓拰涓嬪崟鏀捐繘缁熶竴鍏ュ彛锛?                    璁╁晢鍝佸競鍦烘洿鍍忓晢鍩庯紝鑰屼笉鏄竴缁勫垎鏁ｅ姛鑳介〉銆?                </p>
+            </div>
+            <div class="col-lg-5">
+                <div class="market-stat-grid">
+                    <div class="market-stat-card">
+                        <strong>鏀寔鎼滅储</strong>
+                        <span>鍏抽敭璇嶃€佸垎绫汇€佷环鏍煎尯闂?/span>
+                    </div>
+                    <div class="market-stat-card">
+                        <strong>鏀寔绛涢€?/strong>
+                        <span>鎸夋垚鑹插揩閫熺缉灏忚寖鍥?/span>
+                    </div>
+                    <div class="market-stat-card">
+                        <strong>鏀寔杞寲</strong>
+                        <span>鏀惰棌銆佽鎯呫€佽喘鐗╄溅鍜屼笅鍗?/span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card panel-card border-0 shadow-sm mb-4 market-filter-card">
+        <div class="card-body p-3 p-md-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <div>
+                    <h2 class="section-title mb-1">绛涢€夊晢鍝?/h2>
+                    <p class="section-subtitle mb-0">鍏堟寜鏉′欢缂╁皬鑼冨洿锛屽啀杩涘叆璇︽儏椤靛垽鏂槸鍚﹀€煎緱涔般€?/p>
+                </div>
+                <a class="btn btn-outline-primary btn-sm" th:href="@{/goods/publish}">鎴戣鍙戝竷</a>
+            </div>
+
+            <form class="row g-2 g-md-3" method="get" th:action="@{/goods}">
+                <div class="col-md-4 col-lg-3">
+                    <label class="form-label small text-secondary">鍏抽敭璇?/label>
+                    <input class="form-control" name="keyword" placeholder="搜索商品名称或关键词" th:value="${q.keyword}">
+                </div>
+                <div class="col-md-4 col-lg-2">
+                    <label class="form-label small text-secondary">鍒嗙被</label>
+                    <select class="form-select" name="categoryId">
+                        <option value="">鍏ㄩ儴鍒嗙被</option>
+                        <option th:each="category : ${categories}"
+                                th:value="${category.id}"
+                                th:text="${category.name}"
+                                th:selected="${q.categoryId != null and q.categoryId == category.id}"></option>
+                    </select>
+                </div>
+                <div class="col-md-4 col-lg-2">
+                    <label class="form-label small text-secondary">鎴愯壊</label>
+                    <select class="form-select" name="conditionLevel">
+                        <option value="">鍏ㄩ儴鎴愯壊</option>
+                        <option value="鍏ㄦ柊" th:selected="${q.conditionLevel == '鍏ㄦ柊'}">鍏ㄦ柊</option>
+                        <option value="九成新" th:selected="${q.conditionLevel == '九成新'}">九成新</option>
+                        <option value="八成新" th:selected="${q.conditionLevel == '八成新'}">八成新</option>
+                        <option value="涓冩垚鏂板強浠ヤ笅" th:selected="${q.conditionLevel == '涓冩垚鏂板強浠ヤ笅'}">涓冩垚鏂板強浠ヤ笅</option>
+                    </select>
+                </div>
+                <div class="col-md-3 col-lg-2">
+                    <label class="form-label small text-secondary">鏈€浣庝环</label>
+                    <input class="form-control" name="minPrice" type="number" step="0.01" placeholder="鏈€浣庝环" th:value="${q.minPrice}">
+                </div>
+                <div class="col-md-3 col-lg-2">
+                    <label class="form-label small text-secondary">鏈€楂樹环</label>
+                    <input class="form-control" name="maxPrice" type="number" step="0.01" placeholder="鏈€楂樹环" th:value="${q.maxPrice}">
+                </div>
+                <div class="col-md-6 col-lg-1 d-grid align-self-end">
+                    <button class="btn btn-primary" type="submit">鎼滅储</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section>
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <div>
+                <h2 class="section-title mb-1">鍟嗗搧鍒楄〃</h2>
+                <p class="section-subtitle mb-0">鏀寔鏀惰棌銆佹煡鐪嬭鎯呭拰杩涘叆璐墿杞︽祦绋嬨€?/p>
+            </div>
+        </div>
+
+        <div class="row g-3" th:if="${!items.isEmpty()}">
+            <div class="col-md-6 col-lg-4" th:each="item : ${items}">
+                <div class="card goods-card goods-card--market h-100 border-0 shadow-sm">
+                    <img th:src="${item.coverImageUrl != null ? item.coverImageUrl : '/images/default-goods.svg'}"
+                         class="card-img-top goods-cover"
+                         alt="鍟嗗搧灏侀潰">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                            <h6 class="card-title mb-0" th:text="${item.title}"></h6>
+                            <span class="goods-badge" th:text="${item.conditionLevel}"></span>
+                        </div>
+                        <p class="small text-secondary mb-2" th:text="${item.categoryName}"></p>
+                        <p class="small text-secondary flex-grow-1"
+                           th:text="${item.description != null and item.description.length() > 60 ? #strings.substring(item.description, 0, 60) + '...' : item.description}"></p>
+
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="price-text" th:text="${'楼' + item.price}"></span>
+                            <div class="d-flex gap-2">
+                                <form th:if="${loggedIn}" method="post" th:action="@{/favorites/toggle}">
+                                    <input type="hidden" name="goodsId" th:value="${item.id}">
+                                    <button class="btn btn-sm"
+                                            th:classappend="${favoriteGoodsIds != null and favoriteGoodsIds.contains(item.id) ? ' btn-outline-danger' : ' btn-outline-secondary'}"
+                                            type="submit"
+                                            th:text="${favoriteGoodsIds != null and favoriteGoodsIds.contains(item.id) ? '宸叉敹钘? : '鏀惰棌'}"></button>
+                                </form>
+                                <a class="btn btn-outline-primary btn-sm" th:href="@{'/goods/' + ${item.id}}">鏌ョ湅璇︽儏</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="empty-state" th:if="${items.isEmpty()}">
+            褰撳墠绛涢€夋潯浠朵笅鏆傛棤鍟嗗搧锛屾崲涓叧閿瘝鎴栦环鏍煎尯闂村啀璇曘€?        </div>
+    </section>
+</main>
+</body>
+</html>

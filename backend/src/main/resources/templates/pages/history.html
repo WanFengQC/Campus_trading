@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>濠电偞娼欑换妤咃綖瀹ュ洦濯奸柡澶庢硶缁?- 闂佸搫绉埀顒冩珪閻ゎ喖霉濠婂啯婀板褎绮嶇粋宥夊Χ閸℃﹩娼ㄥΔ鐘靛仜閸熻儻銇?/title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: storeNav('history', ${loggedIn})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <h2 class="section-title mb-3">濠电偞娼欑换妤咃綖瀹ュ洦濯奸柡澶庢硶缁?/h2>
+
+    <div class="row g-3" th:if="${!items.isEmpty()}">
+        <div class="col-md-6 col-lg-4" th:each="item : ${items}">
+            <div class="card goods-card h-100 border-0 shadow-sm">
+                <img th:src="${item.coverImageUrl != null ? item.coverImageUrl : '/images/default-goods.svg'}"
+                     class="card-img-top goods-cover"
+                     alt="商品封面">
+                <div class="card-body d-flex flex-column">
+                    <h6 class="card-title mb-1" th:text="${item.title}"></h6>
+                    <p class="small text-secondary mb-2" th:text="${item.categoryName + ' 閻?' + item.conditionLevel}"></p>
+                    <p class="small text-secondary flex-grow-1"
+                       th:text="${item.description != null and item.description.length() > 60 ? #strings.substring(item.description, 0, 60) + '...' : item.description}"></p>
+                    <div class="small text-secondary mb-2"
+                         th:text="${'濠电偞娼欑换妤咃綖瀹ュ绫嶉柛顐ｆ礃閿涚喖鏌? + #temporals.format(item.viewedAt, 'yyyy-MM-dd HH:mm')}"></div>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <span class="price-text" th:text="${'婵? + item.price}"></span>
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{'/goods/' + ${item.goodsId}}">闂佸搫琚崕鍐诧耿閸涱垱瀚氶柨鏃囨閸?/a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="empty-state" th:if="${items.isEmpty()}">
+        闂佸搫妫楅崐鐟拔涢妶鍚ょ绠涘鍏肩秾闁荤姳鐒﹀妯肩礊瀹ュ鏅悘鐐舵缁犵敻鏌涢悢閿嬵棞闁逛匠鍥╁祦闁割煈鍠楃花姘舵煟椤忓嫷鍎戞繝鈧崨鏉戣Е鐟滃鍩€?    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,3 @@
+ALTER TABLE user
+    ADD COLUMN IF NOT EXISTS avatar_url VARCHAR(255) NULL AFTER nickname;
+

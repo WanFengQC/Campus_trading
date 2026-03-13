@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>鍙戝竷鍟嗗搧 - 鏍″洯浜屾墜鍟嗗煄</title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: storeNav('goods', ${loggedIn})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <section class="market-hero rounded-4 p-4 p-md-5 mb-4">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-7">
+                <div class="hero-chip hero-chip--dark">鍗栧涓績</div>
+                <h1 class="market-title mb-3">蹇€熷彂甯冧綘鐨勯棽缃晢鍝?/h1>
+                <p class="market-copy mb-0">鎶婃爣棰樸€佷环鏍笺€佹垚鑹插拰鑱旂郴鏂瑰紡琛ュ厖瀹屾暣锛岃兘鏄庢樉鎻愬崌鍟嗗搧琚偣寮€鐨勬鐜囥€?/p>
+            </div>
+            <div class="col-lg-5">
+                <div class="market-stat-grid">
+                    <div class="market-stat-card">
+                        <strong>鏍囬娓呮櫚</strong>
+                        <span>鐩存帴鍐欏晢鍝佸悕绉板拰鍨嬪彿锛屼拱瀹舵洿瀹规槗鎼滅储鍒?/span>
+                    </div>
+                    <div class="market-stat-card">
+                        <strong>浠锋牸鏄庣‘</strong>
+                        <span>浠锋牸銆佹垚鑹插拰鍒嗙被瓒婃竻妤氾紝鎴愪氦鏁堢巼瓒婇珮</span>
+                    </div>
+                    <div class="market-stat-card">
+                        <strong>鍥剧墖瀹屾暣</strong>
+                        <span>澶氳搴﹀浘鐗囪兘鍑忓皯閲嶅娌熼€氭垚鏈?/span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="row g-4 align-items-start form-shell">
+        <div class="col-lg-8">
+            <div class="card panel-card border-0 shadow-sm">
+                <div class="card-body p-4 p-md-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <div>
+                            <h2 class="section-title mb-1">濉啓鍟嗗搧淇℃伅</h2>
+                            <p class="section-subtitle mb-0">鎻愪氦鍚庡皢杩涘叆瀹℃牳娴佺▼锛屽鏍搁€氳繃鍚庢墠浼氬湪鍟嗗搧甯傚満灞曠ず銆?/p>
+                        </div>
+                        <a class="btn btn-outline-secondary btn-sm" th:href="@{/goods/my}">鎴戠殑鍟嗗搧</a>
+                    </div>
+
+                    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+                    <form method="post" enctype="multipart/form-data" th:action="@{/goods/publish}">
+                        <div class="mb-3">
+                            <label class="form-label">鍟嗗搧鏍囬</label>
+                            <input class="form-control" name="title" required maxlength="128" placeholder="例如：米家台灯 Pro 九成新">
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">鍟嗗搧鍒嗙被</label>
+                                <select class="form-select" name="categoryId" required>
+                                    <option value="">璇烽€夋嫨鍒嗙被</option>
+                                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">鍟嗗搧鎴愯壊</label>
+                                <select class="form-select" name="conditionLevel" required>
+                                    <option value="鍏ㄦ柊">鍏ㄦ柊</option>
+                                    <option value="九成新">九成新</option>
+                                    <option value="八成新">八成新</option>
+                                    <option value="涓冩垚鏂板強浠ヤ笅">涓冩垚鏂板強浠ヤ笅</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">浠锋牸</label>
+                                <input class="form-control" name="price" type="number" step="0.01" min="0.01" required placeholder="渚嬪 99.00">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">鑱旂郴鏂瑰紡</label>
+                                <input class="form-control" name="contactInfo" maxlength="64" placeholder="鎵嬫満鍙?/ 寰俊 / QQ" required>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <label class="form-label">鍟嗗搧鎻忚堪</label>
+                            <textarea class="form-control" rows="5" maxlength="2000" name="description" placeholder="寤鸿璇存槑浣跨敤鎯呭喌銆侀厤浠舵槸鍚﹂綈鍏ㄣ€佹槸鍚︽敮鎸佽浠枫€佷氦鏄撳湴鐐圭瓑"></textarea>
+                        </div>
+
+                        <div class="mt-3">
+                            <label class="form-label">鍟嗗搧鍥剧墖</label>
+                            <input class="form-control" type="file" name="imageFiles" multiple accept="image/png,image/jpeg,image/jpg,image/webp,image/gif">
+                            <div class="form-hint">鏀寔 jpg/jpeg/png/webp/gif锛屽彲涓婁紶澶氬紶鍥剧墖锛屽崟寮犱笉瓒呰繃 5MB銆?/div>
+                        </div>
+
+                        <button class="btn btn-primary mt-4" type="submit">鎻愪氦鍟嗗搧</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card panel-card border-0 shadow-sm form-tips-card">
+                <div class="card-body p-4">
+                    <h3 class="section-title mb-3">涓婃灦寤鸿</h3>
+                    <div class="tips-list">
+                        <div class="tip-item">
+                            <strong>鏍囬鍒お娉?/strong>
+                            <span>姣旇捣鈥滃嚭鍞數鑴戔€濓紝鍐欌€滄嫰鏁戣€?R7000 涔濇垚鏂扳€濇洿瀹规槗鎴愪氦銆?/span>
+                        </div>
+                        <div class="tip-item">
+                            <strong>鎻忚堪璇翠汉璇?/strong>
+                            <span>鐩存帴鍛婅瘔涔板鐢ㄤ簡澶氫箙銆佹湁娌℃湁鐟曠柕銆侀厤浠跺湪涓嶅湪銆?/span>
+                        </div>
+                        <div class="tip-item">
+                            <strong>鍥剧墖灏介噺鐪熷疄</strong>
+                            <span>浼樺厛涓婁紶瀹炴媿鍥撅紝涓嶈鍙斁缃戠粶瀹ｄ紶鍥俱€?/span>
+                        </div>
+                        <div class="tip-item">
+                            <strong>鑱旂郴鏂瑰紡淇濇寔鍙敤</strong>
+                            <span>閬垮厤鍟嗗搧涓婃灦鍚庝拱瀹惰仈绯讳笉涓婏紝褰卞搷鎴愪氦銆?/span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>缂傚倹鐗炵欢顐﹀疮閸℃鎯?- 闁哄秮鈧櫕鐤ù婊冩湰婢ф粍绂嶉妶鍡橆潨妤犵偛鍟胯ぐ?/title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="container py-4 py-md-5 page-main">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card panel-card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h4 class="mb-3">缂傚倹鐗炵欢顐﹀疮閸℃鎯?/h4>
+                    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+                    <div class="alert alert-info">濞ｅ洦绻傞悺銊︾┍椤旇姤鏆柛姘閻ㄣ垽鏌屽鍡樼厐閺夆晜绋戦崣鍡欑不閿涘嫭鍊為柛娑櫭鎼佸冀闂堚晝绀夐悗鍏夊墲閻楁娊鏌呭宕囩畺闁告艾姘﹂崵婊堝礉閵娿倗鐟愰柡瀣堪閳?/div>
+
+                    <form method="post" enctype="multipart/form-data" th:action="@{'/goods/' + ${goods.id} + '/edit'}">
+                        <input type="hidden" name="coverImageUrl" th:value="${goods.coverImageUrl}">
+
+                        <div class="mb-3">
+                            <label class="form-label">闁哄秴娲。?/label>
+                            <input class="form-control" name="title" required maxlength="128" th:value="${goods.title}">
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">闁告帒妫涚悮?/label>
+                                <select class="form-select" name="categoryId" required>
+                                    <option th:each="category : ${categories}"
+                                            th:value="${category.id}"
+                                            th:text="${category.name}"
+                                            th:selected="${goods.categoryId == category.id}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">闁瑰瓨鍔樻竟?/label>
+                                <select class="form-select" name="conditionLevel" required>
+                                    <option value="全新" th:selected="${goods.conditionLevel == '全新'}">全新</option>
+                                    <option value="九成新" th:selected="${goods.conditionLevel == '九成新'}">九成新</option>
+                                    <option value="八成新" th:selected="${goods.conditionLevel == '八成新'}">八成新</option>
+                                    <option value="七成新及以下" th:selected="${goods.conditionLevel == '七成新及以下'}">七成新及以下</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">濞寸娀鏀遍悧?/label>
+                                <input class="form-control" name="price" type="number" step="0.01" min="0.01" required th:value="${goods.price}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">闁艰鲸姊婚柈鎾棘閻熸壆纭€</label>
+                                <input class="form-control" name="contactInfo" maxlength="64" required th:value="${goods.contactInfo}">
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <label class="form-label">闁哥喎妫楅幖褔骞撹箛姘墯</label>
+                            <textarea class="form-control" rows="4" maxlength="2000" name="description" th:text="${goods.description}"></textarea>
+                        </div>
+
+                        <div class="mt-3">
+                            <label class="form-label">鐟滅増鎸告晶鐘诲炊妤ｅ啯鑲?/label>
+                            <div class="d-flex flex-wrap gap-2 mb-2" th:if="${goods.imageUrls != null and !goods.imageUrls.isEmpty()}">
+                                <img th:each="imageUrl : ${goods.imageUrls}"
+                                     th:src="${imageUrl}"
+                                     class="thumb-image"
+                                     alt="商品图片">
+                            </div>
+                            <div class="small text-secondary mb-2" th:if="${goods.imageUrls == null or goods.imageUrls.isEmpty()}">
+                                鐟滅増鎸告晶鐘测柦閳╁啯绠掗柛銉╃畺濞夛箓宕堕崜褍顣婚柕?                            </div>
+
+                            <label class="form-label">闂佹彃绉甸弻濠冪▔婵犱胶鐐婇柛銉╃畺濞夛箓鏁嶉崼婵嗚闂侇偄顧€缁辨繈寮甸埀顒佸緞?9 鐎殿喚濯寸槐?/label>
+                            <input class="form-control" type="file" name="imageFiles" multiple
+                                   accept="image/png,image/jpeg,image/jpg,image/webp,image/gif">
+                            <div class="form-hint">濠碘€冲€块埀顒€顦扮€氥劑寮弶鎸庣闁绘娴勭槐婵堜焊閸℃ɑ绂岄柟骞垮灩鐢偊寮垫径濠冪闂傚棗妫寸槐婵堢箔椤戣法顏辩€殿喚濮崇紞鏃€绋夐崫鍕闂傚牄鍨瑰ù姗€濡?/div>
+
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" name="clearImages" value="true" id="clearImages">
+                                <label class="form-check-label" for="clearImages">婵炴挸鎳愰埞鏍偝閻楀牊绠掗柛銉╃畺濞夛箓鏁嶉崼婊呯憹濞戞挸锕ｇ槐鍫曞棘閺夋寧绂堥柡鍐ㄥ閺佹捇寮崼顒傜</label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button class="btn btn-primary" type="submit">濞ｅ洦绻傞悺銊╃嵁閼搁潧绲瑰ù婧垮€曢鎼佸冀?/button>
+                            <a class="btn btn-outline-secondary" th:href="@{'/goods/' + ${goods.id}}">闁告瑦鐗楃粔?/a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

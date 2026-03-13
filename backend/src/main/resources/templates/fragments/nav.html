@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="storeNav(active, loggedIn)">
+    <nav class="navbar navbar-expand-lg site-navbar border-bottom store-nav">
+        <div class="container store-nav-container" th:with="isLoggedIn=${loggedIn != null and loggedIn}">
+            <a class="navbar-brand brand-text me-0" th:href="@{/}">校园二手商城</a>
+
+            <div class="store-nav-main">
+                <div class="store-nav-links">
+                    <a class="btn btn-sm"
+                       th:classappend="${active == 'home'} ? ' btn-secondary' : ' btn-outline-secondary'"
+                       th:href="@{/}">首页</a>
+                    <a class="btn btn-sm"
+                       th:classappend="${active == 'goods'} ? ' btn-secondary' : ' btn-outline-secondary'"
+                       th:href="@{/goods}">商品市场</a>
+                    <a class="btn btn-sm"
+                       th:classappend="${active == 'rentals'} ? ' btn-secondary' : ' btn-outline-secondary'"
+                       th:href="@{/rentals}">租赁市场</a>
+                    <a class="btn btn-sm"
+                       th:classappend="${active == 'donations'} ? ' btn-secondary' : ' btn-outline-secondary'"
+                       th:href="@{/donations}">捐赠广场</a>
+                </div>
+
+                <div class="store-nav-account">
+                    <div class="account-dropdown" th:if="${isLoggedIn}">
+                        <a class="btn btn-sm account-dropdown-trigger"
+                           th:classappend="${active == 'account' or active == 'notices' or active == 'chat' or active == 'recommendations' or active == 'favorites' or active == 'history' or active == 'cart' or active == 'orders'} ? ' btn-secondary' : ' btn-outline-secondary'"
+                           th:href="@{/user/center}">个人中心</a>
+                        <div class="account-dropdown-menu">
+                            <a class="account-dropdown-item"
+                               th:classappend="${active == 'account'} ? ' is-active' : ''"
+                               th:href="@{/user/center}">个人中心</a>
+                            <a class="account-dropdown-item"
+                               th:classappend="${active == 'orders'} ? ' is-active' : ''"
+                               th:href="@{/orders}">我的订单</a>
+                            <a class="account-dropdown-item"
+                               th:classappend="${active == 'cart'} ? ' is-active' : ''"
+                               th:href="@{/cart}">购物车</a>
+                            <a class="account-dropdown-item"
+                               th:classappend="${active == 'favorites'} ? ' is-active' : ''"
+                               th:href="@{/favorites}">我的收藏</a>
+                            <a class="account-dropdown-item"
+                               th:classappend="${active == 'history'} ? ' is-active' : ''"
+                               th:href="@{/history}">浏览记录</a>
+                            <a class="account-dropdown-item"
+                               th:classappend="${active == 'recommendations'} ? ' is-active' : ''"
+                               th:href="@{/recommendations}">智能推荐</a>
+                            <a class="account-dropdown-item"
+                               th:classappend="${active == 'chat'} ? ' is-active' : ''"
+                               th:href="@{/chat}">站内私信</a>
+                            <a class="account-dropdown-item"
+                               th:classappend="${active == 'notices'} ? ' is-active' : ''"
+                               th:href="@{/notices}">商城公告</a>
+                        </div>
+                    </div>
+
+                    <a class="btn btn-sm btn-outline-primary" th:if="${!isLoggedIn}" th:href="@{/login}">登录</a>
+                    <a class="btn btn-sm btn-primary" th:if="${!isLoggedIn}" th:href="@{/register}">注册</a>
+
+                    <form th:if="${isLoggedIn}" method="post" th:action="@{/logout}" class="d-inline">
+                        <button class="btn btn-sm btn-outline-danger" type="submit">退出登录</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+</th:block>
+
+<th:block th:fragment="adminNav(active, adminName)">
+    <nav class="navbar navbar-expand-lg site-navbar border-bottom admin-topbar">
+        <div class="container admin-topbar-container">
+            <a class="navbar-brand brand-text me-0" th:href="@{/admin}">商城后台</a>
+
+            <div class="admin-topbar-panel">
+                <div class="admin-topbar-row">
+                    <span class="store-nav-caption">管理</span>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a class="btn btn-sm"
+                           th:classappend="${active == 'dashboard'} ? ' btn-secondary' : ' btn-outline-secondary'"
+                           th:href="@{/admin}">看板</a>
+                        <a class="btn btn-sm"
+                           th:classappend="${active == 'users'} ? ' btn-secondary' : ' btn-outline-secondary'"
+                           th:href="@{/admin/users}">用户</a>
+                        <a class="btn btn-sm"
+                           th:classappend="${active == 'categories'} ? ' btn-secondary' : ' btn-outline-secondary'"
+                           th:href="@{/admin/categories}">分类</a>
+                        <a class="btn btn-sm"
+                           th:classappend="${active == 'goods'} ? ' btn-secondary' : ' btn-outline-secondary'"
+                           th:href="@{/admin/goods}">商品</a>
+                        <a class="btn btn-sm"
+                           th:classappend="${active == 'orders'} ? ' btn-secondary' : ' btn-outline-secondary'"
+                           th:href="@{/admin/orders}">订单</a>
+                        <a class="btn btn-sm"
+                           th:classappend="${active == 'rentals'} ? ' btn-secondary' : ' btn-outline-secondary'"
+                           th:href="@{/admin/rentals}">租赁</a>
+                        <a class="btn btn-sm"
+                           th:classappend="${active == 'donations'} ? ' btn-secondary' : ' btn-outline-secondary'"
+                           th:href="@{/admin/donations}">捐赠</a>
+                        <a class="btn btn-sm"
+                           th:classappend="${active == 'reports'} ? ' btn-secondary' : ' btn-outline-secondary'"
+                           th:href="@{/admin/reports}">举报</a>
+                        <a class="btn btn-sm"
+                           th:classappend="${active == 'notices'} ? ' btn-secondary' : ' btn-outline-secondary'"
+                           th:href="@{/admin/notices}">公告</a>
+                    </div>
+                </div>
+
+                <div class="admin-topbar-row admin-topbar-row--meta">
+                    <span class="store-nav-caption">当前账号</span>
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                        <span class="admin-name-badge" th:text="${adminName != null and adminName != '' ? adminName : '管理员'}"></span>
+                        <form method="post" th:action="@{/admin/logout}" class="d-inline">
+                            <button class="btn btn-sm btn-outline-danger" type="submit">退出</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</th:block>
+</body>
+</html>

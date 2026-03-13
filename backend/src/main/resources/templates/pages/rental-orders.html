@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>缂備礁顦遍崰鏇犵矈閿旂偓濯奸柕蹇曞Т缁€?- 闂佸搫绉埀顒冩珪閻ゎ喖霉濠婂啯婀板褎绮嶇粋宥夊Χ閸℃﹩娼ㄥΔ鐘靛仜閸熻儻銇?/title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: storeNav('rentals', ${loggedIn})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <h2 class="section-title mb-3">缂備礁顦遍崰鏇犵矈閿旂偓濯奸柕蹇曞Т缁€?/h2>
+    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div class="empty-state" th:if="${orders.isEmpty()}">
+        闂佸搫妫楅崐鐟拔涢妶鍥╃煋闁绘棁宕甸妶锕傛偣娴ｉ潧鐏╃€规洜鍠栨俊?    </div>
+
+    <div class="d-grid gap-3" th:if="${!orders.isEmpty()}">
+        <div class="card panel-card border-0 shadow-sm" th:each="order : ${orders}">
+            <div class="card-body">
+                <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+                    <div>
+                        <div class="fw-semibold mb-1">
+                            闁荤姳闄嶉崹鐟扮暦閻旂厧鐭楅柛鎴欏€楃粣?span th:text="${order.orderNo}"></span>
+                        </div>
+                        <div class="small text-secondary">
+                            <span th:text="${order.renterSide ? '闂佺懓鐡ㄩ崹璺何ｉ幖浣哥閻犱警鐓堝鎶芥煛? : '闂佺懓鐡ㄩ崹璺何ｉ幖浣哥闁惧繗顕栧鎶芥煛?}"></span>
+                            <span class="mx-2">|</span>
+                            闂佸憡甯楃粙鎴犵磽閹捐绫嶉柛顐ｆ礃閿涚喖鏌?span th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                        </div>
+                    </div>
+                    <span class="badge order-badge" th:text="${order.statusLabel}"></span>
+                </div>
+
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-7">
+                        <div class="d-flex align-items-center gap-3">
+                            <img th:src="${order.rentalCoverImageUrl != null ? order.rentalCoverImageUrl : '/images/default-goods.svg'}"
+                                 class="list-thumb"
+                                 alt="租赁物品封面">
+                            <div>
+                                <div class="fw-semibold" th:text="${order.rentalTitle}"></div>
+                                <div class="small text-secondary">缂備礁顦遍崰鎰耿閿熺姵鏅?                                    <span th:text="${order.startDate}"></span> ~ <span th:text="${order.endDate}"></span>
+                                </div>
+                                <div class="small text-secondary">闂佸搫鍟ㄩ崕鎶斤綖閵堝鏅?                                    <span th:text="${'婵? + order.dailyRent}"></span>闂佹寧绋戦張顒佺箾閸岀偞鐓傞柟鎼灣缁?                                    <span th:text="${'婵? + order.deposit}"></span>
+                                </div>
+                                <div class="small text-secondary" th:if="${order.renterRemark != null and order.renterRemark != ''}">
+                                    婵犮垼娉涘ú锕傚极閻愮儤鏅?span th:text="${order.renterRemark}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5">
+                        <div class="d-flex justify-content-md-end align-items-center gap-2 flex-wrap">
+                            <div class="price-text me-md-2" th:text="${'闂佽鍓欓…鐑铰?婵? + order.totalAmount}"></div>
+                            <a class="btn btn-sm btn-outline-secondary" th:href="@{'/rentals/' + ${order.rentalItemId}}">闂佸搫琚崕鍐诧耿閸涙潙鐤柛鈩冾殕閹?/a>
+
+                            <form th:if="${order.renterSide and order.status == 'PENDING'}"
+                                  method="post"
+                                  th:action="@{'/rental-orders/' + ${order.orderId} + '/cancel'}">
+                                <button class="btn btn-sm btn-outline-danger" type="submit">闂佸憡鐟﹂悧妤冪矓妞嬪孩濯奸柕蹇曞Т缁€?/button>
+                            </form>
+
+                            <form th:if="${order.ownerSide and order.status == 'PENDING'}"
+                                  method="post"
+                                  th:action="@{'/rental-orders/' + ${order.orderId} + '/owner-confirm'}">
+                                <button class="btn btn-sm btn-primary" type="submit">缂佺虎鍙庨崰娑㈩敇婵犳艾绀勯柧蹇氼嚃濞?/button>
+                            </form>
+
+                            <form th:if="${order.renterSide and order.status == 'ACTIVE'}"
+                                  method="post"
+                                  th:action="@{'/rental-orders/' + ${order.orderId} + '/complete'}">
+                                <button class="btn btn-sm btn-success" type="submit">闁诲海鎳撻張顒勫垂濮樿鲸濯奸柕蹇曞Т缁€?/button>
+                            </form>
+                        </div>
+
+                        <form class="mt-2 d-flex gap-2 justify-content-md-end"
+                              th:if="${order.renterSide and order.status == 'ACTIVE'}"
+                              method="post"
+                              th:action="@{'/rental-orders/' + ${order.orderId} + '/renew'}">
+                            <input class="form-control form-control-sm" style="max-width: 180px;" type="date" name="newEndDate" required>
+                            <button class="btn btn-sm btn-outline-primary" type="submit">缂傚倷绶￠崢楣冿綖?/button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

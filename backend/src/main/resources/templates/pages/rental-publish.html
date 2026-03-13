@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>闁告瑦鍨电粩椋庣矓閻旇崵銈﹂柛鐔锋閹?- 闁哄秮鈧櫕鐤ù婊冩湰婢ф粍绂嶉妶鍡橆潨妤犵偛鍟胯ぐ?/title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: storeNav('rentals', ${loggedIn})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card panel-card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h4 class="mb-3">闁告瑦鍨电粩椋庣矓閻旇崵銈﹂柛鐔锋閹?/h4>
+                    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+                    <form method="post" enctype="multipart/form-data" th:action="@{/rentals/publish}">
+                        <div class="mb-3">
+                            <label class="form-label">闁告帒妫涚悮?/label>
+                            <select class="form-select" name="categoryId" required>
+                                <option value="">閻犲洨鍏橀埀顒€顦扮€氥劑宕氶崱娆掝潶</option>
+                                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">闁哄秴娲。?/label>
+                            <input class="form-control" name="title" maxlength="128" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">闁硅绻楅崼?/label>
+                            <textarea class="form-control" name="description" rows="4"></textarea>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">闁哄啨鍎抽～銈夋煂閹搭垳绀勯柛蹇撳枦缁?/label>
+                                <input class="form-control" name="dailyRent" type="number" min="0" step="0.01" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">闁硅泛銈搁崳楣冩晬閸繂甯楅柨?/label>
+                                <input class="form-control" name="deposit" type="number" min="0" step="0.01" value="0">
+                            </div>
+                        </div>
+                        <div class="mb-3 mt-3">
+                            <label class="form-label">闁艰鲸姊婚柈鎾棘閻熸壆纭€</label>
+                            <input class="form-control" name="contactInfo" maxlength="64" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">閻忓繋绶氬浼村炊閹惧懐绀勯柛娆樺灦閳ь剙顧€缁?/label>
+                            <input class="form-control" type="file" name="imageFile" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif">
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary" type="submit">闁告瑦鍨电粩椋庣矓閻旇崵銈﹂柛鐔锋閹?/button>
+                            <a class="btn btn-outline-secondary" th:href="@{/rentals}">閺夆晜鏌ㄥú鏍矓閻旇崵銈﹂悽顖氬€稿┃鈧?/a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

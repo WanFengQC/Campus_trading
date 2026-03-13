@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>闂佹椿娼块崝宥夊春濞戞氨涓嶉柨娑樺閸?- 闂佸憡鑹炬姝屻亹閹绢喖绠崇憸宥夊春濡ゅ懎鐭?/title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: adminNav('users', ${adminName})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <h2 class="section-title mb-3">闂佹椿娼块崝宥夊春濞戞氨涓嶉柨娑樺閸?/h2>
+    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div class="card panel-card border-0 shadow-sm mb-3">
+        <div class="card-body">
+            <form class="row g-2" method="get" th:action="@{/admin/users}">
+                <div class="col-md-10">
+                    <input class="form-control" name="keyword" placeholder="搜索用户名、昵称或学号" th:value="${keyword}">
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button class="btn btn-primary" type="submit">闂佺懓鍚嬬划搴ㄥ磼?/button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive bg-white rounded-3 shadow-sm p-2">
+        <table class="table align-middle mb-0">
+            <thead>
+            <tr>
+                <th>缂傚倸鍊归悧鏇°亹?/th>
+                <th>闁诲孩鍐荤粻鎴ｃ亹?閻庤鎮堕崕杈亹?/th>
+                <th>闂佸搫瀚弫姝屸叿</th>
+                <th>闁荤姵鍔х粻鎴ｃ亹閸ф鍋愰柤鍝ヮ暯閸?/th>
+                <th>闁诲骸鍘滈崜婵嬫偋閹惰姤鍋愰柤鍝ヮ暯閸?/th>
+                <th>闁诲骸鍘滈崜婵嬫偋閾忣偄绶為柛銉ｅ妽閺?/th>
+                <th>濠电偛顦崝宀勫船娴犲绫嶉柛顐ｆ礃閿?/th>
+                <th class="text-end">闂佺懓鐏濈粔宕囩礊?/th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${users.isEmpty()}">
+                <td colspan="8" class="text-center text-secondary py-4">闂佸搫妫楅崐鐟拔涢妶澶嬪仺闁靛绠戦悡鏇㈡煛娴ｅ搫顣肩€?/td>
+            </tr>
+            <tr th:each="item : ${users}">
+                <td th:text="${item.userId}"></td>
+                <td th:text="${item.username}"></td>
+                <td th:text="${item.nickname}"></td>
+                <td>
+                    <span class="badge"
+                          th:classappend="${item.status == 1 ? ' text-bg-success' : ' text-bg-secondary'}"
+                          th:text="${item.status == 1 ? '濠殿喗绻愮徊浠嬫偉? : '缂備礁鍊烽懗鍫曞极?}"></span>
+                </td>
+                <td>
+                    <span class="badge"
+                          th:classappend="${item.auditStatus == 'APPROVED' ? ' text-bg-success' : (item.auditStatus == 'REJECTED' ? ' text-bg-danger' : ' text-bg-warning')}"
+                          th:text="${item.auditStatusLabel}"></span>
+                </td>
+                <td>
+                    <div th:text="${item.auditNote != null and item.auditNote != '' ? item.auditNote : '-'}"></div>
+                    <div class="small text-secondary" th:if="${item.auditTime != null}"
+                         th:text="${#temporals.format(item.auditTime, 'yyyy-MM-dd HH:mm')}"></div>
+                </td>
+                <td th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                <td class="text-end">
+                    <div class="d-flex justify-content-end gap-1 flex-wrap">
+                        <form class="d-inline" method="post" th:action="@{'/admin/users/' + ${item.userId} + '/status'}">
+                            <input type="hidden" name="status" th:value="${item.status == 1 ? 0 : 1}">
+                            <button class="btn btn-sm"
+                                    th:classappend="${item.status == 1 ? ' btn-outline-danger' : ' btn-outline-success'}"
+                                    type="submit"
+                                    th:text="${item.status == 1 ? '缂備礁鍊烽懗鍫曞极? : '闂佸憡鍑归崹鎶藉极?}"></button>
+                        </form>
+
+                        <form class="d-inline" method="post" th:action="@{'/admin/users/' + ${item.userId} + '/audit'}"
+                              th:if="${item.auditStatus != 'APPROVED'}">
+                            <input type="hidden" name="auditStatus" value="APPROVED">
+                            <input type="hidden" name="auditNote" value="审核通过">
+                            <button class="btn btn-sm btn-outline-primary" type="submit">闂備緡鍋呮穱铏规崲?/button>
+                        </form>
+
+                        <form class="d-inline" method="post" th:action="@{'/admin/users/' + ${item.userId} + '/audit'}"
+                              th:if="${item.auditStatus != 'REJECTED'}">
+                            <input type="hidden" name="auditStatus" value="REJECTED">
+                            <input class="form-control form-control-sm d-inline-block" style="width: 140px;"
+                                   name="auditNote" maxlength="255" placeholder="婵＄偟鎳撻崯鍨洪弽顓炲偍闁绘棃鏀辩粈鍫ユ煥濞戞澧曠憸鐗堢叀閺屽懏寰勫☉姘鳖槴">
+                            <button class="btn btn-sm btn-outline-warning" type="submit">婵＄偟鎳撻崯鍨?/button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

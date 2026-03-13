@@ -1,0 +1,163 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>闁荤姳闄嶉崹鐟扮暦閻旂儤瀚氶柨鏃囨閸?- 闂佸搫绉埀顒冩珪閻ゎ喖霉濠婂啯婀板褎绮嶇粋宥夊Χ閸℃﹩娼ㄥΔ鐘靛仜閸熻儻銇?/title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: storeNav('orders', ${loggedIn})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card panel-card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                        <div>
+                            <h4 class="mb-1">闁荤姳闄嶉崹鐟扮暦閻旂儤瀚氶柨鏃囨閸?/h4>
+                            <div class="small text-secondary">闁荤姳闄嶉崹鐟扮暦閻旂厧鐭楅柛鎴欏€楃粣?span th:text="${order.orderNo}"></span></div>
+                        </div>
+                        <span class="badge order-badge" th:text="${order.statusLabel}"></span>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <img th:src="${order.goodsCoverImageUrl != null ? order.goodsCoverImageUrl : '/images/default-goods.svg'}"
+                             class="list-thumb"
+                             alt="商品封面">
+                        <div>
+                            <div class="fw-semibold" th:text="${order.goodsTitle}"></div>
+                            <div class="small text-secondary" th:if="${order.buyerSide}">
+                                闂佸憡顨嗛悧鏇㈩敊瀹ュ鏅?span th:text="${order.sellerName}"></span>
+                            </div>
+                            <div class="small text-secondary" th:if="${order.sellerSide}">
+                                婵炴垶姊瑰姗€顢欏澶嬫櫖?span th:text="${order.buyerName}"></span>
+                            </div>
+                            <div class="small text-secondary">
+                                闂佸憡甯楃粙鎴犵磽閹捐绫嶉柛顐ｆ礃閿涚喖鏌?span th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 p-3 rounded-3 bg-light">
+                        <div class="small text-secondary mb-1">婵炴垶姊瑰姗€顢欏鍡楃窞闁搞儯鍔嶉弳?/div>
+                        <div th:text="${order.buyerRemark != null and order.buyerRemark != '' ? order.buyerRemark : '闂佹寧绋戦悧濠偽涢妶澶嬫櫖?}"></div>
+                    </div>
+
+                    <div class="mb-3 p-3 rounded-3 bg-light">
+                        <div class="small text-secondary mb-1">缂備焦鍎抽妵妯肩箔閸涱噮娈界€光偓閸愨晛缍?閻熸粎澧楅幑鍥ь焽閻楀牏顩查柕鍫濇椤粌菐閸ワ絽澧插ù?/div>
+                        <div class="small" th:if="${order.meetupTime != null}">
+                            缂備焦鎷濈粻鎴︽偩妤ｅ啫绫嶉柛顐ｆ礃閿涚喖鏌?span th:text="${#temporals.format(order.meetupTime, 'yyyy-MM-dd HH:mm')}"></span>
+                        </div>
+                        <div class="small" th:if="${order.meetupLocation != null and order.meetupLocation != ''}">
+                            缂備焦鎷濈粻鎴︽偩妤ｅ啫鎹堕柟娈垮枛娴狀垶鏌?span th:text="${order.meetupLocation}"></span>
+                        </div>
+                        <div class="small" th:if="${order.meetupNote != null and order.meetupNote != ''}">
+                            婵°倗濮撮惌渚€骞撻敐鍥ㄥ珰閻庢稒蓱椤牠鏌?span th:text="${order.meetupNote}"></span>
+                        </div>
+                        <div class="small text-secondary"
+                             th:if="${order.meetupTime == null and (order.meetupLocation == null or order.meetupLocation == '') and (order.meetupNote == null or order.meetupNote == '')}">
+                            闂佸搫妫楅崐鐟帮耿椤撶姵濯奸柛鎾楀懏鐎俊銈囧Т閻線骞撻敐鍡欌攳闁斥晛鍟╃槐?                        </div>
+                    </div>
+
+                    <div class="mb-3 p-3 rounded-3 border"
+                         th:if="${order.status != 'COMPLETED' and order.status != 'CANCELLED'}">
+                        <div class="fw-semibold mb-2">闂佸搫娲ら悺銊╁蓟婵犲喚娈界€光偓閸愨晛缍撴繛锝呮礌閸撴繃瀵?/div>
+                        <form method="post" th:action="@{'/orders/' + ${order.orderId} + '/meetup'}">
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <label class="form-label small text-secondary">缂備焦鎷濈粻鎴︽偩妤ｅ啫绫嶉柛顐ｆ礃閿?/label>
+                                    <input class="form-control form-control-sm"
+                                           type="datetime-local"
+                                           name="meetupTime"
+                                           th:value="${order.meetupTime != null ? #temporals.format(order.meetupTime, 'yyyy-MM-dd''T''HH:mm') : ''}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small text-secondary">缂備焦鎷濈粻鎴︽偩妤ｅ啫鎹堕柟娈垮枛娴?/label>
+                                    <input class="form-control form-control-sm" name="meetupLocation" maxlength="255"
+                                           th:value="${order.meetupLocation}">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label small text-secondary">婵°倗濮撮惌渚€骞撻敐鍥ㄥ珰閻庢稒蓱椤?/label>
+                                    <textarea class="form-control form-control-sm" rows="2" name="meetupNote" maxlength="255"
+                                              th:text="${order.meetupNote}"></textarea>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary mt-2" type="submit">婵烇絽娲︾换鍌炴偤閵婏富娈界€光偓閸愨晛缍撴繛锝呮礌閸撴繃瀵?/button>
+                        </form>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <div class="price-text" th:text="${'婵? + order.amount}"></div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a class="btn btn-sm btn-outline-secondary" th:href="@{'/goods/' + ${order.goodsId}}">闂佸搫琚崕鍐诧耿閸涙潙鐤柛鈩冾殕閹?/a>
+
+                            <form th:if="${order.buyerSide and order.status == 'PENDING'}"
+                                  method="post"
+                                  th:action="@{'/orders/' + ${order.orderId} + '/cancel'}">
+                                <button class="btn btn-sm btn-outline-danger" type="submit">闂佸憡鐟﹂悧妤冪矓妞嬪孩濯奸柕蹇曞Т缁€?/button>
+                            </form>
+
+                            <form th:if="${order.sellerSide and order.status == 'PENDING'}"
+                                  method="post"
+                                  th:action="@{'/orders/' + ${order.orderId} + '/seller-confirm'}">
+                                <button class="btn btn-sm btn-primary" type="submit">缂佺虎鍙庨崰娑㈩敇缂佹顩查柕鍫濇椤?/button>
+                            </form>
+
+                            <form th:if="${order.buyerSide and order.status == 'SELLER_CONFIRMED'}"
+                                  method="post"
+                                  th:action="@{'/orders/' + ${order.orderId} + '/buyer-complete'}">
+                                <button class="btn btn-sm btn-success" type="submit">缂佺虎鍙庨崰娑㈩敇婵犳艾缁╅柟顖滃瑜?/button>
+                            </form>
+
+                            <a th:if="${order.status == 'COMPLETED' and !reviewed}"
+                               class="btn btn-sm btn-outline-primary"
+                               th:href="@{'/orders/' + ${order.orderId} + '/review'}">闁荤姴娲ょ€氼亪鎮抽婧惧亾娴ｅ喚娼愰柡?/a>
+                            <a th:if="${order.status == 'COMPLETED' and reviewed}"
+                               class="btn btn-sm btn-outline-success"
+                               th:href="@{/reviews/my}">閻庤鐡曠亸顏堟儊鎼淬垻顩?/a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card panel-card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="mb-3">闂佺粯顭堥崺鏍焵椤戣法鍔嶇紒渚婇檮濞碱亪顢楁担鐧哥礆闂?/h5>
+                    <div class="empty-state p-3" th:if="${logs == null or logs.isEmpty()}">闂佸搫妫楅崐鐟拔涢妶澶婄睄闁靛鍎崇粻鍫曟偣娴ｈ绶茬紓?/div>
+                    <div class="timeline-list" th:if="${logs != null and !logs.isEmpty()}">
+                        <div class="timeline-item" th:each="log : ${logs}">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="fw-semibold">
+                                    <span th:text="${log.actionLabel}"></span>
+                                    <span class="small text-secondary ms-2" th:text="${#temporals.format(log.createdAt, 'MM-dd HH:mm')}"></span>
+                                </div>
+                                <div class="small text-secondary mt-1">
+                                    闂佺懓鐏濈粔宕囩礊閺冣偓缁傚秹鎮€靛摜鐛?span th:text="${log.operatorName}"></span>
+                                </div>
+                                <div class="small text-secondary mt-1">
+                                    闂佺粯顭堥崺鏍焵椤戣法顦︾憸鏉款樀瀹曠娀寮介悽鐢电崶<span th:text="${log.fromStatusLabel}"></span>
+                                    <span class="mx-1">闂?/span>
+                                    <span th:text="${log.toStatusLabel}"></span>
+                                </div>
+                                <div class="small mt-1" th:if="${log.note != null and log.note != ''}">
+                                    婵犮垼娉涘ú锕傚极閻愮儤鏅?span th:text="${log.note}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

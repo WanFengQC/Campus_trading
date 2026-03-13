@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>闂佸憡鐟﹂崹鐢电博閻戣棄绠查柟閭﹀灣椤?- 闂佸搫绉埀顒冩珪閻ゎ喖霉濠婂啯婀板褎绮嶇粋宥夊Χ閸℃﹩娼ㄥΔ鐘靛仜閸熻儻銇?/title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: storeNav('donations', ${loggedIn})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card panel-card border-0 shadow-sm">
+                <div class="card-body p-4 p-md-5">
+                    <h2 class="section-title mb-3">闂佸憡鐟﹂崹鐢电博閻戣棄绠查柟閭﹀灣椤╃兘鏌ｅ缁樻珔闁?/h2>
+                    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+                    <form method="post" th:action="@{/donations/publish}" enctype="multipart/form-data" class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">闂佸憡甯掑Λ娑氭偖?/label>
+                            <select class="form-select" name="categoryId" required>
+                                <option value="">闁荤姴娲ㄩ崗姗€鍩€椤掆偓椤︽壆鈧哎鍔戝畷姘跺幢濞嗘帩娼?/option>
+                                <option th:each="category : ${categories}"
+                                        th:value="${category.id}"
+                                        th:text="${category.name}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">闂佸搫绉村ú顓€?/label>
+                            <input class="form-control" type="text" name="title" maxlength="128" placeholder="例如：闲置台灯免费送" required>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">闂佽壈椴稿濠氭焾閹绢喖妫橀柣鐔稿绾偓</label>
+                            <input class="form-control" type="text" name="contactInfo" maxlength="64" placeholder="例如：微信/手机号（建议站内私信）" required>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">婵炲瓨鍤庨崐鏍暜閹绢喖鎹堕柟娈垮枛娴狀垶鏌ㄥ☉妯煎鐟滅増鐓￠弻鍛緞濞戞氨顦?/label>
+                            <input class="form-control" type="text" name="pickupAddress" maxlength="255" placeholder="例如：图书馆北门自取">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">闂佺粯銇涢弲娑㈠箹瑜忛幏鐘碘偓娑櫳戦～鏍煥濞戞澧曠憸鐗堢叀閺屽懏寰勫☉姘鳖槴</label>
+                            <textarea class="form-control" rows="4" name="description" maxlength="2000"
+                                      placeholder="请补充物品新旧程度、可领取时间和注意事项"></textarea>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">闁诲繐绻嬬欢姘焽娴兼潙鐐婇柛鎾楀喚鏆梺鎸庣☉閻楀棜銇愰弻銉︾劵濠㈣埖绋撶粈?/label>
+                            <input class="form-control" type="file" name="imageFile" accept=".jpg,.jpeg,.png,.webp,.gif">
+                            <div class="form-hint">闂佽　鍋撴い鏍ㄧ☉閻?jpg/jpeg/png/webp/gif闂佹寧绋戦張顒€銆掗懜闈涚窞?2MB</div>
+                        </div>
+                        <div class="col-md-12 d-flex gap-2">
+                            <button class="btn btn-primary" type="submit">闂佸憡鐟﹂崹鐢电博閻戣棄绠查柟閭﹀灣椤?/button>
+                            <a class="btn btn-outline-secondary" th:href="@{/donations}">闁哄鏅滈弻銊ッ?/a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

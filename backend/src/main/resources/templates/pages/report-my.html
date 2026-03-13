@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>闁瑰瓨鍨瑰▓鎴炵▔閻愵剙袚 - 闁哄秮鈧櫕鐤ù婊冩湰婢ф粍绂嶉妶鍡橆潨妤犵偛鍟胯ぐ?/title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: storeNav('account', ${loggedIn})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <h2 class="section-title mb-3">闁瑰瓨鍨瑰▓鎴炵▔閻愵剙袚閻犱焦婢樼紞?/h2>
+    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div class="empty-state" th:if="${items.isEmpty()}">闁哄棗鍊瑰Λ銈嗙▔閻愵剙袚閻犱焦婢樼紞宥夊Υ?/div>
+
+    <div class="d-grid gap-3" th:if="${!items.isEmpty()}">
+        <div class="card panel-card border-0 shadow-sm" th:each="item : ${items}">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="fw-semibold">
+                        <span th:text="${item.targetType}"></span>
+                        <span class="text-secondary">#</span>
+                        <span th:text="${item.targetId}"></span>
+                        <span class="text-secondary" th:text="${'闁? + item.targetSummary + '闁?}"></span>
+                    </div>
+                    <span class="badge order-badge" th:text="${item.statusLabel}"></span>
+                </div>
+                <div class="small text-secondary mb-1" th:text="${'濞戞挾鍋撴慨銈夊储閻旈攱绀堥柨? + item.reason}"></div>
+                <div class="small text-secondary mb-1"
+                     th:text="${'闁圭粯鍔掑锕傚籍閸洘锛熼柨? + #temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm')}"></div>
+                <div class="mb-2" th:text="${item.detail != null ? item.detail : '闁挎稑鐗婂Λ銈囨嫚閿斿墽鐭庨悹鍥х摠濡叉垿鏁?}"></div>
+                <div class="small text-secondary" th:if="${item.handleNote != null and item.handleNote != ''}">
+                    濠㈣泛瀚幃濠勬嫚鐎涙ɑ顫栭柨?span th:text="${item.handleNote}"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

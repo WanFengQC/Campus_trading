@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/campus_trading?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+app:
+  jwt:
+    secret: REPLACE_THIS_WITH_A_LONG_LOCAL_SECRET_1234567890
+    expire-seconds: 86400
+  file:
+    local-upload-dir: ./data/uploads
+    public-url-prefix: /uploads

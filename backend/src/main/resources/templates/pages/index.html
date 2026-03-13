@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>校园二手商城</title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: storeNav('home', ${loggedIn})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <section class="hero-card hero-card--shop rounded-4 p-4 p-md-5 shadow-sm">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+                <div class="hero-chip">校园二手商城</div>
+                <h1 class="display-5 fw-bold mb-3 hero-main-title">让闲置真正变成可成交的商品</h1>
+                <p class="mb-4 hero-desc">
+                    面向校园场景的二手商城，支持商品发布、筛选搜索、下单成交、租赁与捐赠，
+                    把分散的信息入口收拢到同一个商城首页，方便更快找到想买、想租或想领取的物品。
+                </p>
+                <div class="d-flex flex-wrap gap-2 hero-actions">
+                    <a class="btn hero-btn-primary" th:href="@{/goods}">进入商品市场</a>
+                    <a class="btn hero-btn-ghost" th:href="@{/rentals}">进入租赁市场</a>
+                    <a class="btn hero-btn-ghost" th:href="@{/donations}">进入捐赠广场</a>
+                    <a class="btn hero-btn-ghost" th:href="@{/recommendations}">看看推荐</a>
+                    <a class="btn hero-btn-link" th:if="${loggedIn}" th:href="@{/user/center}">个人中心</a>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="hero-metrics rounded-4 p-3 p-md-4">
+                    <div class="metric-item">
+                        <span class="metric-label">发布更快</span>
+                        <span class="metric-value">文字加图片即可完成上架，适合教材、数码和生活用品</span>
+                    </div>
+                    <div class="metric-item mt-3">
+                        <span class="metric-label">筛选更准</span>
+                        <span class="metric-value">支持分类、成色、价格区间和关键词搜索</span>
+                    </div>
+                    <div class="metric-item mt-3">
+                        <span class="metric-label">流程更完整</span>
+                        <span class="metric-value">购物车、订单流转、租赁和捐赠都在同一个商城里完成</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mt-4 mt-md-5">
+        <div class="section-head">
+            <div>
+                <h2 class="section-title mb-1">热门专区</h2>
+                <p class="section-subtitle mb-0">按场景进入，直接逛你需要的频道，不用先理解功能划分。</p>
+            </div>
+        </div>
+        <div class="row g-3 g-md-4 mt-1">
+            <div class="col-md-4">
+                <a class="card panel-card module-card module-card--goods h-100 border-0 shadow-sm text-decoration-none" th:href="@{/goods}">
+                    <div class="card-body module-card-body">
+                        <div class="module-card-icon">低价好物</div>
+                        <div class="module-card-copy">
+                            <h5 class="card-title">二手好物</h5>
+                            <p class="card-text text-secondary mb-0">教材、数码、宿舍用品等集中展示，适合快速比较价格与成色。</p>
+                        </div>
+                        <span class="module-card-arrow">去逛商品</span>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a class="card panel-card module-card module-card--rental h-100 border-0 shadow-sm text-decoration-none" th:href="@{/rentals}">
+                    <div class="card-body module-card-body">
+                        <div class="module-card-icon">按天租用</div>
+                        <div class="module-card-copy">
+                            <h5 class="card-title">租赁专区</h5>
+                            <p class="card-text text-secondary mb-0">短期使用的设备和物品单独管理，租期、押金和续租流程更清晰。</p>
+                        </div>
+                        <span class="module-card-arrow">去看租赁</span>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a class="card panel-card module-card module-card--donation h-100 border-0 shadow-sm text-decoration-none" th:href="@{/donations}">
+                    <div class="card-body module-card-body">
+                        <div class="module-card-icon">免费领取</div>
+                        <div class="module-card-copy">
+                            <h5 class="card-title">爱心捐赠</h5>
+                            <p class="card-text text-secondary mb-0">把闲置物品送给真正需要的人，申请、认领和记录都集中展示。</p>
+                        </div>
+                        <span class="module-card-arrow">去领好物</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="mt-4 mt-md-5">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div>
+                <h2 class="section-title mb-1">猜你喜欢</h2>
+                <p class="section-subtitle mb-0">根据浏览与上架情况挑出更值得先看的商品。</p>
+            </div>
+            <a class="btn btn-sm btn-outline-primary" th:href="@{/recommendations}">查看更多</a>
+        </div>
+        <div class="row g-3" th:if="${recommendations != null and !recommendations.isEmpty()}">
+            <div class="col-md-6 col-lg-4" th:each="item : ${recommendations}">
+                <div class="card goods-card h-100 border-0 shadow-sm">
+                    <img th:src="${item.coverImageUrl != null ? item.coverImageUrl : '/images/default-goods.svg'}"
+                         class="card-img-top goods-cover"
+                         alt="商品图片">
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="card-title mb-1" th:text="${item.title}"></h6>
+                        <p class="small text-secondary mb-2" th:text="${item.categoryName + ' · ' + item.conditionLevel}"></p>
+                        <p class="small text-secondary flex-grow-1"
+                           th:text="${item.description != null and item.description.length() > 60 ? #strings.substring(item.description, 0, 60) + '...' : item.description}"></p>
+                        <div class="recommend-reason mb-2" th:text="${item.recommendReason}"></div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="price-text" th:text="${'¥' + item.price}"></span>
+                            <a class="btn btn-outline-primary btn-sm" th:href="@{'/goods/' + ${item.goodsId}}">查看详情</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="empty-state" th:if="${recommendations == null or recommendations.isEmpty()}">
+            推荐列表暂时还没有内容，稍后刷新再看。
+        </div>
+    </section>
+
+    <section class="mt-4 mt-md-5">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div>
+                <h2 class="section-title mb-1">最新公告</h2>
+                <p class="section-subtitle mb-0">商城规则、功能更新和交易提醒统一在这里查看。</p>
+            </div>
+            <a class="btn btn-sm btn-outline-primary" th:href="@{/notices}">查看全部</a>
+        </div>
+        <div class="card panel-card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="empty-state p-3" th:if="${notices == null or notices.isEmpty()}">暂无公告</div>
+                <div class="d-grid gap-3" th:if="${notices != null and !notices.isEmpty()}">
+                    <button type="button"
+                            class="notice-item-button border rounded-3 p-3 text-start"
+                            th:each="notice : ${notices}"
+                            th:attr="data-notice-title=${notice.title},
+                                     data-notice-publisher=${notice.publisher},
+                                     data-notice-time=${#temporals.format(notice.createdAt, 'yyyy-MM-dd HH:mm')},
+                                     data-notice-content=${notice.content}">
+                        <div class="d-flex justify-content-between align-items-start gap-2">
+                            <div class="fw-semibold" th:text="${notice.title}"></div>
+                            <div class="small text-secondary"
+                                 th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd HH:mm')}"></div>
+                        </div>
+                        <div class="small text-secondary mt-1 mb-1" th:text="${'发布人：' + notice.publisher}"></div>
+                        <div class="text-secondary"
+                             th:text="${notice.content != null and notice.content.length() > 80 ? #strings.substring(notice.content, 0, 80) + '...' : notice.content}"></div>
+                        <div class="notice-item-hint">点击查看完整公告</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div class="notice-modal" id="noticeModal" aria-hidden="true">
+    <div class="notice-modal-backdrop" data-notice-close></div>
+    <div class="notice-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="noticeModalTitle">
+        <div class="notice-modal-header">
+            <div>
+                <div class="notice-modal-kicker">商城公告</div>
+                <h3 class="notice-modal-title" id="noticeModalTitle">公告详情</h3>
+            </div>
+            <button type="button" class="notice-modal-close" data-notice-close aria-label="关闭">×</button>
+        </div>
+        <div class="notice-modal-meta">
+            <span id="noticeModalPublisher">发布人：</span>
+            <span id="noticeModalTime"></span>
+        </div>
+        <div class="notice-modal-content" id="noticeModalContent"></div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const modal = document.getElementById("noticeModal");
+        const title = document.getElementById("noticeModalTitle");
+        const publisher = document.getElementById("noticeModalPublisher");
+        const time = document.getElementById("noticeModalTime");
+        const content = document.getElementById("noticeModalContent");
+        const triggers = document.querySelectorAll(".notice-item-button");
+        const closers = modal ? modal.querySelectorAll("[data-notice-close]") : [];
+
+        if (!modal || !title || !publisher || !time || !content || !triggers.length) {
+            return;
+        }
+
+        const closeModal = function () {
+            modal.classList.remove("is-open");
+            modal.setAttribute("aria-hidden", "true");
+            document.body.classList.remove("notice-modal-open");
+        };
+
+        const openModal = function (trigger) {
+            title.textContent = trigger.dataset.noticeTitle || "公告详情";
+            publisher.textContent = "发布人：" + (trigger.dataset.noticePublisher || "商城管理员");
+            time.textContent = trigger.dataset.noticeTime || "";
+            content.textContent = trigger.dataset.noticeContent || "";
+            modal.classList.add("is-open");
+            modal.setAttribute("aria-hidden", "false");
+            document.body.classList.add("notice-modal-open");
+        };
+
+        triggers.forEach(function (trigger) {
+            trigger.addEventListener("click", function () {
+                openModal(trigger);
+            });
+        });
+
+        closers.forEach(function (closer) {
+            closer.addEventListener("click", closeModal);
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape" && modal.classList.contains("is-open")) {
+                closeModal();
+            }
+        });
+    })();
+</script>
+</body>
+</html>

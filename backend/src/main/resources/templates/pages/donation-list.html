@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>闂佺顫夐崝妯肩矉閹烘宓侀柛顭戝枟缁?- 闂佸搫绉埀顒冩珪閻ゎ喖霉濠婂啯婀板褎绮嶇粋宥夊Χ閸℃﹩娼ㄥΔ鐘靛仜閸熻儻銇?/title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: storeNav('donations', ${loggedIn})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div class="card panel-card border-0 shadow-sm mb-3">
+        <div class="card-body">
+            <form class="row g-2" method="get" th:action="@{/donations}">
+                <div class="col-md-5">
+                    <input class="form-control" name="keyword" placeholder="搜索捐赠标题、物品关键词或联系人" th:value="${keyword}">
+                </div>
+                <div class="col-md-5">
+                    <select class="form-select" name="categoryId">
+                        <option value="">闂佺绻堥崝鎴﹀磿閹绢喖绀嗛柛鈩冪懆椤?/option>
+                        <option th:each="category : ${categories}"
+                                th:value="${category.id}"
+                                th:text="${category.name}"
+                                th:selected="${categoryId != null and categoryId == category.id}"></option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button class="btn btn-primary" type="submit">缂備焦绋掗惄顖炲焵?/button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row g-3" th:if="${!items.isEmpty()}">
+        <div class="col-md-6 col-lg-4" th:each="item : ${items}">
+            <div class="card goods-card h-100 border-0 shadow-sm">
+                <img th:src="${item.coverImageUrl != null ? item.coverImageUrl : '/images/default-goods.svg'}"
+                     class="card-img-top goods-cover"
+                     alt="捐赠物品封面">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <h6 class="card-title mb-0" th:text="${item.title}"></h6>
+                        <span class="badge text-bg-success">闂佸憡鐟崹鐢割敇缂佹﹫绱?/span>
+                    </div>
+                    <p class="small text-secondary mb-2" th:text="${item.categoryName + ' 閻?闂佸憡鐟﹂崹鐢电博閻戣姤鍤€闁告粌鍟扮粣? + item.donorName}"></p>
+                    <p class="small text-secondary flex-grow-1"
+                       th:text="${item.description != null and item.description.length() > 72 ? #strings.substring(item.description, 0, 72) + '...' : item.description}"></p>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <span class="small text-secondary" th:text="${item.pickupAddress != null ? item.pickupAddress : '缂備焦鍎抽妵妯肩箔閸涙潙纭€闊洦鎸诲▍灞矫瑰┃鍨偓鏍暜閹绢喖鎹堕柟娈垮枛娴?}"></span>
+                        <a class="btn btn-outline-primary btn-sm" th:href="@{'/donations/' + ${item.id}}">闂佸搫琚崕鍐诧耿閸涱垱瀚氶柨鏃囨閸?/a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="empty-state" th:if="${items.isEmpty()}">
+        闂佸搫妫楅崐鐟拔涢妶澶婄煑妞ゆ牗绻嶉崥鍥涢弶鎸庮棤婵炲牊鍨块獮鎴﹀箛椤栨粠娴勯梺缁樸仜閺呮盯骞栬閺佸秴鐣濋埀顒勫煟閵忋倕瑙﹂幖绮光偓铏珒闂佸搫顦崕鍐诧耿閸涘瓨鍎戦悗锝冨妷閸?    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>闂佺懓鐡ㄩ崹鐟扳枔閹达箑绠查柟閭﹀灣椤?- 闂佸搫绉埀顒冩珪閻ゎ喖霉濠婂啯婀板褎绮嶇粋宥夊Χ閸℃﹩娼ㄥΔ鐘靛仜閸熻儻銇?/title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: storeNav('donations', ${loggedIn})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <h2 class="section-title mb-3">闂佺懓鐡ㄩ崹鐟扳枔閹达箑绠查柟閭﹀灣椤╃兘鏌ｅ缁樻珔闁?/h2>
+    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div class="empty-state" th:if="${items.isEmpty()}">
+        婵炶揪绲挎慨鍓ф崲閺囩偐鏌﹂柍鈺佸暞缁犳帡鏌涘▎鎰仴缂佹梻鍏橀獮鎴﹀箛椤栨粠娴勯梺缁樸仜閺呮盯骞栬婵?    </div>
+
+    <div class="d-grid gap-3" th:if="${!items.isEmpty()}">
+        <div class="card panel-card border-0 shadow-sm" th:each="item : ${items}">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <img th:src="${item.coverImageUrl != null ? item.coverImageUrl : '/images/default-goods.svg'}"
+                             class="list-thumb"
+                             alt="捐赠物品封面">
+                        <div>
+                            <div class="fw-semibold" th:text="${item.title}"></div>
+                            <div class="small text-secondary" th:text="${item.categoryName}"></div>
+                            <div class="small text-secondary" th:text="${'闂佽壈椴稿濠氭焾閹绢喖妫橀柣鐔稿绾偓闂? + item.contactInfo}"></div>
+                            <div class="small text-secondary"
+                                 th:text="${item.pickupAddress != null ? '婵炲瓨鍤庨崐鏍暜閹绢喖鎹堕柟娈垮枛娴狀垶鏌? + item.pickupAddress : '婵炲瓨鍤庨崐鏍暜閹绢喖鎹堕柟娈垮枛娴狀垶鏌ㄥ☉娆愮殤闁搞倕瀛╃粙澶屸偓锝庝簻缁€鍌炴煕?}"></div>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge"
+                              th:classappend="${item.status == 'AVAILABLE' ? ' text-bg-success' : ' text-bg-secondary'}"
+                              th:text="${item.statusLabel}"></span>
+                        <div class="mt-2">
+                            <a class="btn btn-sm btn-outline-secondary" th:href="@{'/donations/' + ${item.id}}">闂佸搫琚崕鍐诧耿?/a>
+                            <form class="d-inline"
+                                  th:if="${item.status == 'AVAILABLE'}"
+                                  method="post"
+                                  th:action="@{'/donations/' + ${item.id} + '/off-shelf'}">
+                                <button class="btn btn-sm btn-outline-danger" type="submit">婵炴垶鎸搁鍡涙倶?/button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

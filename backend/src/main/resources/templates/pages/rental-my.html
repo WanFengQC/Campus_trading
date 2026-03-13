@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>闂佺懓鐡ㄩ崹鐟扳枔閹寸姷鐭撻柣鏃囧吹閵堬箓鏌涢悢閿嬵棞闁?- 闂佸搫绉埀顒冩珪閻ゎ喖霉濠婂啯婀板褎绮嶇粋宥夊Χ閸℃﹩娼ㄥΔ鐘靛仜閸熻儻銇?/title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: storeNav('rentals', ${loggedIn})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <h2 class="section-title mb-3">闂佺懓鐡ㄩ崹浣冦亹閸屾粍鏆滈柛鎰典簼閻ｈ京绱掓径灞芥灆缂佷緤绠撳畷顖炲幢濡や焦鍎?/h2>
+    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div class="table-responsive bg-white rounded-3 shadow-sm p-2">
+        <table class="table align-middle mb-0">
+            <thead>
+            <tr>
+                <th>闂佸摜鍠庡Λ妤呭箹?/th>
+                <th>闂佸搫鍟ㄩ崕鎶斤綖?/th>
+                <th>闂佺娉涢妶鎼佸闯?/th>
+                <th>闂佺粯顭堥崺鏍焵?/th>
+                <th class="text-end">闂佺懓鐏濈粔宕囩礊?/th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${items.isEmpty()}">
+                <td colspan="5" class="text-center text-secondary py-4">婵炶揪绲挎慨鍓ф崲閺囩偐鏌﹂柍鈺佸暞缁犳帡鏌涘▎鎰仴缂佹棃顥撶划鏃堟偄閼姐們鍋婇梺鍝ュ枎濡骞栬婵?/td>
+            </tr>
+            <tr th:each="item : ${items}">
+                <td>
+                    <div class="d-flex align-items-center gap-2">
+                        <img th:src="${item.coverImageUrl != null ? item.coverImageUrl : '/images/default-goods.svg'}" class="list-thumb" alt="租赁商品封面">
+                        <div>
+                            <div class="fw-semibold" th:text="${item.title}"></div>
+                            <div class="small text-secondary" th:text="${item.categoryName}"></div>
+                        </div>
+                    </div>
+                </td>
+                <td class="price-text" th:text="${'婵? + item.dailyRent}"></td>
+                <td th:text="${'婵? + item.deposit}"></td>
+                <td>
+                    <span class="badge"
+                          th:classappend="${item.status == 'AVAILABLE' ? ' text-bg-success' : (item.status == 'RENTING' ? ' text-bg-warning' : ' text-bg-secondary')}"
+                          th:text="${item.status == 'AVAILABLE' ? '闂佸憡鐟崹鎶斤綖閵堝洦灏? : (item.status == 'RENTING' ? '缂備礁顦遍崰鏇犵矈閿旂晫鈻? : '閻庤鐡曞鎾剁箔閸涙潙鍑?)}"></span>
+                </td>
+                <td class="text-end">
+                    <a class="btn btn-sm btn-outline-primary" th:href="@{'/rentals/' + ${item.id}}">闁荤姴娴勯梽鍕磿?/a>
+                    <form class="d-inline" method="post" th:action="@{'/rentals/' + ${item.id} + '/off-shelf'}">
+                        <button class="btn btn-sm btn-outline-danger"
+                                type="submit"
+                                th:disabled="${item.status == 'RENTING'}">婵炴垶鎸搁鍡涙倶?/button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

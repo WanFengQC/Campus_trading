@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>缁狅紕鎮婇崨妯兼瑜?- 閺嶁€虫疮娴滃本澧滄禍銈嗘楠炲啿褰?/title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="auth-bg">
+<main class="container py-5 page-main">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card auth-card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h3 class="fw-bold mb-2">缁狅紕鎮婇崨妯烘倵閸?/h3>
+                    <p class="text-secondary mb-3">閻ц缍嶉崥搴″讲缁狅紕鎮婇悽銊﹀煕閵嗕礁鍨庣猾姹団偓浣告櫌閸濅椒绗岀拋銏犲礋閵?/p>
+
+                    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+                    <form method="post" th:action="@{/admin/login}">
+                        <div class="mb-3">
+                            <label class="form-label">缁狅紕鎮婇崨妯垮閸?/label>
+                            <input class="form-control" type="text" name="username" maxlength="64" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">鐎靛棛鐖?/label>
+                            <input class="form-control" type="password" name="password" maxlength="64" required>
+                        </div>
+                        <button class="btn btn-primary w-100" type="submit">閻ц缍嶉崥搴″酱</button>
+                    </form>
+
+                    <div class="small text-secondary mt-3">
+                        姒涙顓荤拹锕€褰块敍姝歛dmin`閿涘矂绮拋銈呯槕閻緤绱癭123456`
+                    </div>
+                    <a class="btn btn-link px-0 mt-2" th:href="@{/}">鏉╂柨娲栭崜宥呭酱妫ｆ牠銆?/a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

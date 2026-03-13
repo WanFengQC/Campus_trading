@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>缂備礁顦遍崰鏇犵矈閿旂偓瀚氶柨鏃囨閸?- 闂佸搫绉埀顒冩珪閻ゎ喖霉濠婂啯婀板褎绮嶇粋宥夊Χ閸℃﹩娼ㄥΔ鐘靛仜閸熻儻銇?/title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: storeNav('rentals', ${loggedIn})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div class="card panel-card border-0 shadow-sm overflow-hidden">
+        <div class="row g-0">
+            <div class="col-md-5">
+                <img th:src="${item.coverImageUrl != null ? item.coverImageUrl : '/images/default-goods.svg'}"
+                     class="img-fluid detail-cover"
+                     alt="租赁物品封面">
+            </div>
+            <div class="col-md-7">
+                <div class="card-body p-4 p-md-5">
+                    <h2 class="mb-2" th:text="${item.title}"></h2>
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <span class="badge text-bg-light" th:text="${item.categoryName}"></span>
+                        <span class="badge"
+                              th:classappend="${item.status == 'AVAILABLE' ? ' text-bg-success' : ' text-bg-secondary'}"
+                              th:text="${item.status == 'AVAILABLE' ? '闂佸憡鐟崹鎶斤綖閵堝洦灏? : (item.status == 'RENTING' ? '缂備礁顦遍崰鏇犵矈閿旂晫鈻? : '閻庤鐡曞鎾剁箔閸涙潙鍑?)}"></span>
+                    </div>
+
+                    <p class="price-text fs-4 mb-1" th:text="${'闂佸搫鍟ㄩ崕鎶斤綖?婵? + item.dailyRent}"></p>
+                    <p class="text-secondary mb-3" th:text="${'闂佺娉涢妶鎼佸闯?婵? + item.deposit}"></p>
+
+                    <div class="info-list mb-3">
+                        <p><strong>闂佸憡鍨煎▍锝夛綖閵堝妫橀柣褍鎽滅粣?/strong><span th:text="${item.ownerName}"></span></p>
+                        <p><strong>闂佽壈椴稿濠氭焾閹绢喖妫橀柣鐔稿绾偓闂?/strong><span th:text="${item.contactInfo}"></span></p>
+                    </div>
+
+                    <div class="bg-light rounded-3 p-3 mb-4">
+                        <div class="small text-secondary mb-1">缂備礁顦遍崰鏇犵矈閿旂偓瀚氶悗娑櫳戦～?/div>
+                        <div th:text="${item.description != null ? item.description : '闂佸搫妫楅崐鐟拔涢妶鍥ㄥ珰閻庢稒蓱椤?}"></div>
+                    </div>
+
+                    <form method="post" th:action="@{'/rentals/' + ${item.id} + '/order'}" class="row g-2">
+                        <div class="col-md-4">
+                            <label class="form-label">閻庢鍠掗崑鎾斥攽椤旂⒈鍎愭俊顐熸櫊瀵?/label>
+                            <input class="form-control" type="date" name="startDate" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">缂傚倷鐒﹂幐璇差焽椤愶箑绫嶉柕澶涢檮閸?/label>
+                            <input class="form-control" type="date" name="endDate" required>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">婵犮垼娉涘ú锕傚极閻愮儤鏅柛顐ｇ箓鐠佹煡姊洪銏╂缂?/label>
+                            <input class="form-control" type="text" maxlength="255" name="renterRemark"
+                                   placeholder="例如：希望在周五下午取货，可在教学楼东门交接">
+                        </div>
+                        <div class="col-md-12 d-flex gap-2 mt-2">
+                            <button class="btn btn-primary"
+                                    type="submit"
+                                    th:disabled="${item.status != 'AVAILABLE'}"
+                                    th:text="${item.status == 'AVAILABLE' ? '闂佸湱绮崝鎺戭潩閿斿墽鐭撻柣鏃囧吹閵堬箓鎮规担闈涚仼鐎? : '閻熸粎澧楅幐鍛婃櫠閻樺磭鈻旂€广儱鎳庣拋鎻掆槈閹炬剚鍎忕€?}"></button>
+                            <a class="btn btn-outline-secondary" th:href="@{/rentals}">闁哄鏅滈弻銊ッ洪弽顓炵婵°倕瀚ㄩ埀?/a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

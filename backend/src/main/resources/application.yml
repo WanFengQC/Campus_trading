@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: campus-trading-backend
+  profiles:
+    active: local
+  thymeleaf:
+    cache: false
+
+server:
+  port: 8080
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+
+app:
+  jwt:
+    secret: REPLACE_THIS_WITH_A_LONG_LOCAL_SECRET_1234567890
+    expire-seconds: 86400
+  file:
+    local-upload-dir: ./data/uploads
+    public-url-prefix: /uploads

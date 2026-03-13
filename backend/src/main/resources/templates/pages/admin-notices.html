@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>闂佺娴氶崜娆撳箟閿涘嫮涓嶉柨娑樺閸?- 闂佸憡鑹炬姝屻亹閹绢喖绠崇憸宥夊春濡ゅ懎鐭?/title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: adminNav('notices', ${adminName})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <h2 class="section-title mb-3">闂佺娴氶崜娆撳箟閿涘嫮涓嶉柨娑樺閸?/h2>
+    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div class="card panel-card border-0 shadow-sm mb-3">
+        <div class="card-body">
+            <h6 class="mb-3">闂佸憡鐟﹂崹鐢电博閻戣棄绀傛い鎺嗗亾闁?/h6>
+            <form method="post" th:action="@{/admin/notices/create}" class="row g-3">
+                <div class="col-md-8">
+                    <input class="form-control" name="title" maxlength="128" placeholder="请输入公告标题" required>
+                </div>
+                <div class="col-md-2">
+                    <input class="form-control" type="number" name="sortNo" placeholder="排序值（默认 0）" value="0">
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button class="btn btn-primary" type="submit">闂佸憡鐟﹂崹鐢电博?/button>
+                </div>
+                <div class="col-md-12">
+                    <textarea class="form-control" name="content" rows="4" maxlength="2000" placeholder="请输入公告正文" required></textarea>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive bg-white rounded-3 shadow-sm p-2">
+        <table class="table align-middle mb-0">
+            <thead>
+            <tr>
+                <th>缂傚倸鍊归悧鏇°亹?/th>
+                <th>闂佸搫绉村ú顓€?闂佸憡鍔曢幊搴敊?/th>
+                <th>闂佸憡鐟﹂崹鐢电博闁垮顩?/th>
+                <th>闂佸湱鍎ょ敮鎺旇姳?/th>
+                <th>闂佺粯顭堥崺鏍焵?/th>
+                <th>闂佸搫鍟悥鐓幬?/th>
+                <th class="text-end">闂佺懓鐏濈粔宕囩礊?/th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${items.isEmpty()}">
+                <td colspan="7" class="text-center text-secondary py-4">闂佸搫妫楅崐鐟拔涢妶澶婄妞ゆ巻鍋撻柟?/td>
+            </tr>
+            <tr th:each="item : ${items}">
+                <form method="post" th:action="@{'/admin/notices/' + ${item.id} + '/update'}">
+                    <td th:text="${item.id}"></td>
+                    <td>
+                        <input class="form-control form-control-sm mb-2" name="title" maxlength="128" th:value="${item.title}" required>
+                        <textarea class="form-control form-control-sm" name="content" rows="3" maxlength="2000" required th:text="${item.content}"></textarea>
+                    </td>
+                    <td th:text="${item.publisher}"></td>
+                    <td>
+                        <input class="form-control form-control-sm" type="number" name="sortNo" th:value="${item.sortNo}" required>
+                    </td>
+                    <td>
+                        <select class="form-select form-select-sm" name="status">
+                            <option value="1" th:selected="${item.status == 1}">闂佸憡鐟﹂崹鐢电博闁垮鈻?/option>
+                            <option value="0" th:selected="${item.status == 0}">闂傚倸鎳忛崝妯何?/option>
+                        </select>
+                    </td>
+                    <td th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-outline-primary" type="submit">婵烇絽娲︾换鍌炴偤?/button>
+                    </td>
+                </form>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

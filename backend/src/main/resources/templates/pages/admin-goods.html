@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>闂佸摜鍠庡Λ妤呭箹瑜忕划濠氭晬閸曨剙鈧?- 闂佸憡鑹炬姝屻亹閹绢喖绠崇憸宥夊春濡ゅ懎鐭?/title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: adminNav('goods', ${adminName})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <h2 class="section-title mb-3">闂佸摜鍠庡Λ妤呭箹瑜忕划濠氭晬閸曨剙鈧?/h2>
+    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div class="card panel-card border-0 shadow-sm mb-3">
+        <div class="card-body">
+            <form class="row g-2" method="get" th:action="@{/admin/goods}">
+                <div class="col-md-4">
+                    <input class="form-control" name="keyword" placeholder="搜索商品标题或卖家" th:value="${keyword}">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" name="status">
+                        <option value="">闂佺绻堥崝鎴﹀磿閹绢喗鍋愰柤鍝ヮ暯閸?/option>
+                        <option value="ON_SHELF" th:selected="${status == 'ON_SHELF'}">闂侀潻璐熼崝宀勫极?/option>
+                        <option value="OFF_SHELF" th:selected="${status == 'OFF_SHELF'}">閻庤鐡曞鎾剁箔閸涙潙鍑?/option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" name="auditStatus">
+                        <option value="">闂佺绻堥崝鎴﹀磿鐎电硶鍋撻崗澶婂⒉闁绘濞婇幃鈺呮嚋绾版ê浜?/option>
+                        <option value="PENDING" th:selected="${auditStatus == 'PENDING'}">閻庡灚婢橀幊搴敇閹间礁鍐€?/option>
+                        <option value="APPROVED" th:selected="${auditStatus == 'APPROVED'}">閻庣懓鎲￠悡锟犲焵椤掍椒浜㈢紒?/option>
+                        <option value="REJECTED" th:selected="${auditStatus == 'REJECTED'}">閻庣懓鎲￠悡锟犲煘韫囨稑鐐?/option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button class="btn btn-primary" type="submit">缂備焦绋掗惄顖炲焵?/button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive bg-white rounded-3 shadow-sm p-2">
+        <table class="table align-middle mb-0">
+            <thead>
+            <tr>
+                <th>缂傚倸鍊归悧鏇°亹?/th>
+                <th>闂佸摜鍠庡Λ妤呭箹?/th>
+                <th>闂佸憡顨嗛悧鏇㈩敊?/th>
+                <th>闂佸憡甯掑Λ娑氭偖?/th>
+                <th>婵炲濞€閺€閬嶆偋?/th>
+                <th>闂佺粯顭堥崺鏍焵?/th>
+                <th>闁诲骸鍘滈崜婵嬫偋閹惰姤鍋愰柤鍝ヮ暯閸?/th>
+                <th>闁诲骸鍘滈崜婵嬫偋閾忣偄绶為柛銉ｅ妽閺?/th>
+                <th>闂佸憡鐟﹂崹鐢电博閻戣棄绫嶉柛顐ｆ礃閿?/th>
+                <th class="text-end">闂佺懓鐏濈粔宕囩礊?/th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${items.isEmpty()}">
+                <td colspan="10" class="text-center text-secondary py-4">闂佸搫妫楅崐鐟拔涢妶澶婄柈闁糕剝顨嗛幆鍌炴偣娴ｈ绶茬紓?/td>
+            </tr>
+            <tr th:each="item : ${items}">
+                <td th:text="${item.goodsId}"></td>
+                <td>
+                    <div class="fw-semibold" th:text="${item.title}"></div>
+                    <div class="small text-secondary" th:text="${item.contactInfo}"></div>
+                </td>
+                <td th:text="${item.sellerName}"></td>
+                <td th:text="${item.categoryName}"></td>
+                <td class="price-text" th:text="${'婵? + item.price}"></td>
+                <td>
+                    <span class="badge"
+                          th:classappend="${item.status == 'ON_SHELF' ? ' text-bg-success' : ' text-bg-secondary'}"
+                          th:text="${item.status == 'ON_SHELF' ? '闂侀潻璐熼崝宀勫极? : '閻庤鐡曞鎾剁箔閸涙潙鍑?}"></span>
+                </td>
+                <td>
+                    <span class="badge"
+                          th:classappend="${item.auditStatus == 'APPROVED' ? ' text-bg-success' : (item.auditStatus == 'REJECTED' ? ' text-bg-danger' : ' text-bg-warning')}"
+                          th:text="${item.auditStatusLabel}"></span>
+                </td>
+                <td>
+                    <div th:text="${item.auditNote != null and item.auditNote != '' ? item.auditNote : '-'}"></div>
+                    <div class="small text-secondary" th:if="${item.auditTime != null}"
+                         th:text="${#temporals.format(item.auditTime, 'yyyy-MM-dd HH:mm')}"></div>
+                </td>
+                <td th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                <td class="text-end">
+                    <a class="btn btn-sm btn-outline-secondary" th:href="@{'/goods/' + ${item.goodsId}}">闂佸搫琚崕鍐诧耿?/a>
+                    <form class="d-inline" method="post" th:action="@{'/admin/goods/' + ${item.goodsId} + '/audit'}"
+                          th:if="${item.auditStatus != 'APPROVED'}">
+                        <input type="hidden" name="auditStatus" value="APPROVED">
+                        <input type="hidden" name="auditNote" value="审核通过">
+                        <button class="btn btn-sm btn-outline-primary" type="submit">闂備緡鍋呮穱铏规崲?/button>
+                    </form>
+                    <form class="d-inline" method="post" th:action="@{'/admin/goods/' + ${item.goodsId} + '/audit'}"
+                          th:if="${item.auditStatus != 'REJECTED'}">
+                        <input type="hidden" name="auditStatus" value="REJECTED">
+                        <input class="form-control form-control-sm d-inline-block" style="width: 140px;"
+                               name="auditNote" maxlength="255" placeholder="婵＄偟鎳撻崯鍨洪弽顓炲偍闁绘棃鏀辩粈鍫ユ煥濞戞澧曠憸鐗堢叀閺屽懏寰勫☉姘鳖槴">
+                        <button class="btn btn-sm btn-outline-warning" type="submit">婵＄偟鎳撻崯鍨?/button>
+                    </form>
+                    <form class="d-inline" method="post" th:action="@{'/admin/goods/' + ${item.goodsId} + '/off-shelf'}">
+                        <button class="btn btn-sm btn-outline-danger" type="submit" th:disabled="${item.status != 'ON_SHELF'}">閻庢鍠栭幖顐﹀春濡や胶鈻旈悗锝庡亞娴?/button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>购物车 - 校园二手商城</title>
+    <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/nav :: storeNav('cart', ${loggedIn})}"></div>
+
+<main class="container py-4 py-md-5 page-main">
+    <h2 class="section-title mb-3">购物车</h2>
+    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div class="empty-state" th:if="${items.isEmpty()}">
+        你的购物车还是空的，去商品市场挑选想买的商品吧。
+    </div>
+
+    <div class="row g-4" th:if="${!items.isEmpty()}">
+        <div class="col-lg-8">
+            <div class="card panel-card border-0 shadow-sm">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                        <tr>
+                            <th>商品</th>
+                            <th>卖家</th>
+                            <th>单价</th>
+                            <th>状态</th>
+                            <th class="text-end">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${items}">
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <img th:src="${item.goodsCoverImageUrl != null ? item.goodsCoverImageUrl : '/images/default-goods.svg'}"
+                                         class="list-thumb"
+                                         alt="商品封面">
+                                    <div>
+                                        <div class="fw-semibold" th:text="${item.goodsTitle}"></div>
+                                        <div class="small text-secondary" th:text="${item.goodsConditionLevel}"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="small fw-semibold" th:text="${item.sellerName}"></div>
+                                <div class="small text-secondary" th:text="${item.contactInfo}"></div>
+                            </td>
+                            <td class="price-text" th:text="${'¥' + item.price}"></td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${item.goodsStatus == 'ON_SHELF' ? ' text-bg-success' : ' text-bg-secondary'}"
+                                      th:text="${item.goodsStatus == 'ON_SHELF' ? '可下单' : '已下架'}"></span>
+                            </td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-primary" th:href="@{'/goods/' + ${item.goodsId}}">商品详情</a>
+                                <form class="d-inline" method="post" th:action="@{'/cart/' + ${item.cartId} + '/remove'}">
+                                    <button class="btn btn-sm btn-outline-danger" type="submit">移除</button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card panel-card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="mb-3">结算信息</h5>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-secondary">已选商品数量</span>
+                        <span th:text="${items.size()}"></span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-secondary">应付总额</span>
+                        <span class="price-text fs-5" th:text="${'¥' + totalAmount}"></span>
+                    </div>
+
+                    <form method="post" th:action="@{/cart/checkout}">
+                        <label class="form-label">买家备注（选填）</label>
+                        <textarea class="form-control mb-3" name="buyerRemark" rows="3" maxlength="255"
+                                  placeholder="例如：希望今天晚上 7 点在图书馆北门交易"></textarea>
+
+                        <label class="form-label">见面时间（选填）</label>
+                        <input class="form-control mb-3" type="datetime-local" name="meetupTime">
+
+                        <label class="form-label">见面地点（选填）</label>
+                        <input class="form-control mb-3" name="meetupLocation" maxlength="255"
+                               placeholder="例如：食堂二楼靠窗位置">
+
+                        <label class="form-label">见面说明（选填）</label>
+                        <textarea class="form-control mb-3" name="meetupNote" rows="2" maxlength="255"
+                                  placeholder="例如：请提前 10 分钟到，到了后站内私信联系"></textarea>
+                        <button class="btn btn-primary w-100" type="submit">提交订单并进入待确认</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>
