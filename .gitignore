@@ -1,0 +1,27 @@
+﻿# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Backend
+backend/target/
+backend/.mvn/
+backend/data/uploads
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.pnpm-store/
+
+environment/*
+
+开题报告（终）.doc
+CODEX.MD
