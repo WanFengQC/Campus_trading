@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>缂備焦姊归悷銉╁船鐎靛摜鐭撳ù锝堟腹缁?- 闂佸搫绉埀顒冩珪閻ゎ喖霉濠婂啯婀板褎绮嶇粋宥夊Χ閸℃﹩娼ㄥΔ鐘靛仜閸熻儻銇?/title>
+    <title>站内私信 - 校园二手商城</title>
     <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
@@ -11,15 +11,15 @@
 <div th:replace="~{fragments/nav :: storeNav('chat', ${loggedIn})}"></div>
 
 <main class="container py-4 py-md-5 page-main">
-    <h2 class="section-title mb-3">缂備焦姊归悷銉╁船鐎靛摜鐭撳ù锝堟腹缁?/h2>
+    <h2 class="section-title mb-3">站内私信</h2>
     <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
     <div class="row g-3">
         <div class="col-lg-4">
             <div class="card panel-card border-0 shadow-sm">
                 <div class="card-body p-0">
-                    <div class="p-3 border-bottom fw-semibold">闂佽壈椴稿濠氭焾鐎涙顩?/div>
-                    <div th:if="${contacts.isEmpty()}" class="p-3 text-secondary">闂佸搫妫楅崐鐟拔涢妶鍡楊嚤婵ê纾Ο鍫ユ偣娴ｈ绶茬紓宥呯Ч婵?/div>
+                    <div class="p-3 border-bottom fw-semibold">会话列表</div>
+                    <div th:if="${contacts.isEmpty()}" class="p-3 text-secondary">暂无会话，先从商品详情页联系卖家吧。</div>
                     <a th:each="item : ${contacts}"
                        class="d-block text-decoration-none text-reset p-3 border-bottom"
                        th:classappend="${selectedPeerId != null and selectedPeerId == item.peerUserId ? ' bg-light' : ''}"
@@ -31,7 +31,7 @@
                                   th:text="${item.unreadCount}"></span>
                         </div>
                         <div class="small text-secondary mt-1"
-                             th:text="${item.lastMessage != null ? item.lastMessage : '闂佸搫妫楅崐鐟拔涢妶鍛闁割偆鍠嶇槐?}"></div>
+                             th:text="${item.lastMessage != null and !#strings.isEmpty(item.lastMessage) ? item.lastMessage : '暂无消息'}"></div>
                     </a>
                 </div>
             </div>
@@ -40,19 +40,22 @@
         <div class="col-lg-8">
             <div class="card panel-card border-0 shadow-sm">
                 <div class="card-body">
-                    <div th:if="${selectedPeerId == null}" class="text-secondary">闁荤姴娲ㄩ崗姗€鍩€椤掆偓椤︽壆鈧哎鍔嶇粙澶愬焵椤掍胶鈻旀い蹇撴矗缁挾绱掗婵愬敽婵懓顦锝夊焵椤掍焦鍙忛悗锝庡幒閸犲﹤顭块崹娑欐澓闁?/div>
+                    <div th:if="${selectedPeerId == null}" class="text-secondary">
+                        请选择一个会话查看消息内容。
+                    </div>
+
                     <div th:if="${selectedPeerId != null}">
                         <div class="border rounded-3 p-3 mb-3" style="min-height: 360px; max-height: 420px; overflow-y: auto;">
-                            <div th:if="${messages == null or messages.isEmpty()}" class="text-secondary">闂佸搫妫楅崐鐟拔涢妶鍛闁割偆鍠嶇槐鏍煥濞戞瀚扮憸鏉垮€块弻鍛媴娓氼垰鍓虫繛鎴炴尨閸嬫捇鏌℃径鍡楀⒉缂佸鍏橀獮渚€顢涘顓炲壃闂?/div>
+                            <div th:if="${messages == null or messages.isEmpty()}" class="text-secondary">暂无消息，发送第一条消息开始聊天。</div>
                             <div th:each="msg : ${messages}" class="mb-2 d-flex"
                                  th:classappend="${msg.mine ? ' justify-content-end' : ' justify-content-start'}">
                                 <div class="px-3 py-2 rounded-3"
                                      th:classappend="${msg.mine ? ' text-bg-primary' : ' bg-light'}"
                                      style="max-width: 75%;">
                                     <div class="small fw-semibold mb-1" th:text="${msg.fromUserName}"></div>
-                                    <div th:text="${msg.content}"></div>
+                                    <div style="white-space: pre-wrap;" th:text="${msg.content}"></div>
                                     <div class="small mt-1 opacity-75"
-                                         th:text="${#temporals.format(msg.createdAt, 'MM-dd HH:mm')}"></div>
+                                         th:text="${msg.createdAt != null ? #temporals.format(msg.createdAt, 'MM-dd HH:mm') : '-'}"></div>
                                 </div>
                             </div>
                         </div>
@@ -63,7 +66,7 @@
                                 <input class="form-control" name="content" maxlength="500" placeholder="输入你要发送的消息" required>
                             </div>
                             <div class="col-md-2 d-grid">
-                                <button class="btn btn-primary" type="submit">闂佸憡鐟﹂崹鍧楀焵?/button>
+                                <button class="btn btn-primary" type="submit">发送</button>
                             </div>
                         </form>
                     </div>

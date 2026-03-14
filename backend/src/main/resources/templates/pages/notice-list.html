@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>濡ょ姷鍋涢崯鑳亹閹绢喖绀傛い鎺嗗亾闁?- 闂佸搫绉埀顒冩珪閻ゎ喖霉濠婂啯婀板褎绮嶇粋宥夊Χ閸℃﹩娼ㄥΔ鐘靛仜閸熻儻銇?/title>
+    <title>商城公告 - 校园二手商城</title>
     <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
@@ -11,96 +11,25 @@
 <div th:replace="~{fragments/nav :: storeNav('notices', ${loggedIn})}"></div>
 
 <main class="container py-4 py-md-5 page-main">
-    <h2 class="section-title mb-3">濡ょ姷鍋涢崯鑳亹閹绢喖绀傛い鎺嗗亾闁?/h2>
-    <div class="empty-state" th:if="${items.isEmpty()}">闂佸搫妫楅崐鐟拔涢妶澶婄妞ゆ巻鍋撻柟璇х節婵?/div>
+    <h2 class="section-title mb-3">商城公告</h2>
+
+    <div class="empty-state" th:if="${items.isEmpty()}">
+        暂无公告。
+    </div>
 
     <div class="d-grid gap-3" th:if="${!items.isEmpty()}">
-        <button type="button"
-                class="notice-item-button card panel-card border-0 shadow-sm text-start"
-                th:each="item : ${items}"
-                th:attr="data-notice-title=${item.title},
-                         data-notice-publisher=${item.publisher},
-                         data-notice-time=${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm')},
-                         data-notice-content=${item.content}">
+        <article class="card panel-card border-0 shadow-sm" th:each="item : ${items}">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start gap-2">
+                <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
                     <h5 class="mb-2" th:text="${item.title}"></h5>
                     <span class="small text-secondary"
-                          th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                          th:text="${item.createdAt != null ? #temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm') : '-'}"></span>
                 </div>
-                <div class="text-secondary small mb-2" th:text="${'闂佸憡鐟﹂崹鐢电博闁垮顩查柣姘嚟缁? + item.publisher}"></div>
-                <div class="text-secondary"
-                     th:text="${item.content != null and item.content.length() > 120 ? #strings.substring(item.content, 0, 120) + '...' : item.content}"></div>
-                <div class="notice-item-hint">闂佺粯鍔楅幊鎾诲吹椤曗偓瀵濡疯缁犳瑩鏌涜箛瀣闁?/div>
+                <div class="text-secondary small mb-2" th:text="${'发布人：' + item.publisher}"></div>
+                <p class="mb-0" style="white-space: pre-wrap;" th:text="${item.content}"></p>
             </div>
-        </button>
+        </article>
     </div>
 </main>
-
-<div class="notice-modal" id="noticeModal" aria-hidden="true">
-    <div class="notice-modal-backdrop" data-notice-close></div>
-    <div class="notice-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="noticeModalTitle">
-        <div class="notice-modal-header">
-            <div>
-                <div class="notice-modal-kicker">濡ょ姷鍋涢崯鑳亹閹绢喖绀傛い鎺嗗亾闁?/div>
-                <h3 class="notice-modal-title" id="noticeModalTitle">闂佺娴氶崜娆撳箟閿涘嫭瀚氶柨鏃囨閸?/h3>
-            </div>
-            <button type="button" class="notice-modal-close" data-notice-close aria-label="关闭">×</button>
-        </div>
-        <div class="notice-modal-meta">
-            <span id="noticeModalPublisher">闂佸憡鐟﹂崹鐢电博闁垮顩查柣姘嚟缁?/span>
-            <span id="noticeModalTime"></span>
-        </div>
-        <div class="notice-modal-content" id="noticeModalContent"></div>
-    </div>
-</div>
-
-<script>
-    (function () {
-        const modal = document.getElementById("noticeModal");
-        const title = document.getElementById("noticeModalTitle");
-        const publisher = document.getElementById("noticeModalPublisher");
-        const time = document.getElementById("noticeModalTime");
-        const content = document.getElementById("noticeModalContent");
-        const triggers = document.querySelectorAll(".notice-item-button");
-        const closers = modal ? modal.querySelectorAll("[data-notice-close]") : [];
-
-        if (!modal || !title || !publisher || !time || !content || !triggers.length) {
-            return;
-        }
-
-        const closeModal = function () {
-            modal.classList.remove("is-open");
-            modal.setAttribute("aria-hidden", "true");
-            document.body.classList.remove("notice-modal-open");
-        };
-
-        const openModal = function (trigger) {
-            title.textContent = trigger.dataset.noticeTitle || "闂佺娴氶崜娆撳箟閿涘嫭瀚氶柨鏃囨閸?;
-            publisher.textContent = "闂佸憡鐟﹂崹鐢电博闁垮顩查柣姘嚟缁? + (trigger.dataset.noticePublisher || "缂備緡鍨靛畷鐢靛垝閾忓湱涓嶉柨娑樺閸婄偤鏌?);
-            time.textContent = trigger.dataset.noticeTime || "";
-            content.textContent = trigger.dataset.noticeContent || "";
-            modal.classList.add("is-open");
-            modal.setAttribute("aria-hidden", "false");
-            document.body.classList.add("notice-modal-open");
-        };
-
-        triggers.forEach(function (trigger) {
-            trigger.addEventListener("click", function () {
-                openModal(trigger);
-            });
-        });
-
-        closers.forEach(function (closer) {
-            closer.addEventListener("click", closeModal);
-        });
-
-        document.addEventListener("keydown", function (event) {
-            if (event.key === "Escape" && modal.classList.contains("is-open")) {
-                closeModal();
-            }
-        });
-    })();
-</script>
 </body>
 </html>

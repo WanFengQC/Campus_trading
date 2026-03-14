@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>闂佸搫鎳樼紓姘跺礂濮椻偓楠炴帡濡搁妸銉ь槰 - 闂佸搫绉埀顒冩珪閻ゎ喖霉濠婂啯婀板褎绮嶇粋宥夊Χ閸℃﹩娼ㄥΔ鐘靛仜閸熻儻銇?/title>
+    <title>推荐中心 - 校园二手商城</title>
     <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
@@ -13,16 +13,17 @@
 <main class="container py-4 py-md-5 page-main">
     <section class="card panel-card border-0 shadow-sm mb-4 recommendation-hero">
         <div class="card-body p-4 p-md-5">
-            <h1 class="h3 mb-2">婵炴垶鎹佸銊х礊濡顕辨俊顖氭惈鐢儵鏌涢弽褏绉洪柛妯稿€濆鎾级閹存繆顔夐梺鐓庣枃婵倝宕瑰顓狀洸闁靛牆娲﹂悾鍗炩攽閸屾粍娅曞?/h1>
+            <h1 class="h3 mb-2">猜你喜欢</h1>
             <p class="text-secondary mb-0">
-                闂佽浜介崝蹇撶暦濡偐纾奸柟鎯ь嚟娴滎垰霉閸忓吋鐨戦柟顕嗙秮瀹曘儵宕煎鍛槈闂佹眹鍔岀€氼厾绮婇懡銈嗗枂闁割偅绋堥崑鎾存媴鐟欏嫭姣嗛梺鑺ッ换鍫ュ焵椤戞寧顦风紒妤€鎳樺畷锟犲即閻愭壆鍓ㄦ繝闈涘€归崹婵堢箔瀹€鍕闁靛ě鍛闂佺粯鍩堥崢鑲┾偓瑙勫▕瀹曟繈濡搁敂鐟颁壕濞达綀顫夌痪顖炴煛閸屾繂鐒介柍?            </p>
+                根据你的浏览与收藏记录，为你优先展示可能感兴趣的商品；同时也会提供平台热门商品供你快速浏览。
+            </p>
         </div>
     </section>
 
     <section class="mb-4" th:if="${loggedIn}">
         <div class="d-flex justify-content-between align-items-center mb-2">
-            <h2 class="section-title mb-0">闂佺粯纰嶇划鍫㈢礊濮椻偓瀹曟澘顭ㄩ崟闈涗缓</h2>
-            <a class="btn btn-sm btn-outline-primary" th:href="@{/history}">闂佸搫琚崕鍐诧耿閸涱劶纭呯疀濮樺吋缍岄柣鐘辩劍濠㈡绱?/a>
+            <h2 class="section-title mb-0">个性化推荐</h2>
+            <a class="btn btn-sm btn-outline-primary" th:href="@{/history}">查看浏览记录</a>
         </div>
         <div class="row g-3" th:if="${personalItems != null and !personalItems.isEmpty()}">
             <div class="col-md-6 col-lg-4" th:each="item : ${personalItems}">
@@ -32,26 +33,27 @@
                          alt="商品封面">
                     <div class="card-body d-flex flex-column">
                         <h6 class="card-title mb-1" th:text="${item.title}"></h6>
-                        <p class="small text-secondary mb-2" th:text="${item.categoryName + ' 閻?' + item.conditionLevel}"></p>
+                        <p class="small text-secondary mb-2" th:text="${item.categoryName + ' · ' + item.conditionLevel}"></p>
                         <p class="small text-secondary flex-grow-1"
                            th:text="${item.description != null and item.description.length() > 60 ? #strings.substring(item.description, 0, 60) + '...' : item.description}"></p>
                         <div class="recommend-reason mb-2" th:text="${item.recommendReason}"></div>
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="price-text" th:text="${'婵? + item.price}"></span>
-                            <a class="btn btn-outline-primary btn-sm" th:href="@{'/goods/' + ${item.goodsId}}">闂佸搫琚崕鍐诧耿閸涱垱瀚氶柨鏃囨閸?/a>
+                            <span class="price-text" th:text="${'¥' + item.price}"></span>
+                            <a class="btn btn-outline-primary btn-sm" th:href="@{'/goods/' + ${item.goodsId}}">查看详情</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="empty-state" th:if="${personalItems == null or personalItems.isEmpty()}">
-            婵炶揪绲挎慨鏉戯耿椤忓牏宓侀柛鎰絻闁伴亶鏌ｉ妸銉ヮ仹缂併劋鍗冲畷婵嬪Ω閵娧咁啂婵炴垶鎸哥粔鎾ㄩ崟顒€绶炴慨妯哄⒔缁€澶愭煕韫囨挾澧涚紒浣藉吹閹叉挳宕奸悢椋庝粣闂佽　鍋撻柟顖滃椤ユ垿鏌涢幋鐘残℃繛鍡愬灲瀹曨垶宕卞Δ浣瑰剬闂佹寧绋戦惉濂告焾鐎靛摜纾奸柣鏂垮缁愭绱撴担鍦噧闁搞値鍙冨瀵糕偓闈涙憸缂堥亶鏌涢幋婵囶棤婵炲牊鍨块獮鎺楀Ω閵娿儳顦ㄩ梺?        </div>
+            暂无个性化推荐，先去浏览或收藏一些商品，我们会为你生成更准确的推荐。
+        </div>
     </section>
 
     <section>
         <div class="d-flex justify-content-between align-items-center mb-2">
-            <h2 class="section-title mb-0">闂佺粯鍩堥崣鍐ㄎ涢鍕闁靛鍔岀粈?/h2>
-            <a class="btn btn-sm btn-outline-primary" th:href="@{/goods}">闂佸憡顭堥褔寮查姀銈呬紶濞达絽鎽滈悾顓㈡煕?/a>
+            <h2 class="section-title mb-0">热门商品</h2>
+            <a class="btn btn-sm btn-outline-primary" th:href="@{/goods}">查看更多商品</a>
         </div>
         <div class="row g-3" th:if="${hotItems != null and !hotItems.isEmpty()}">
             <div class="col-md-6 col-lg-4" th:each="item : ${hotItems}">
@@ -61,20 +63,21 @@
                          alt="商品封面">
                     <div class="card-body d-flex flex-column">
                         <h6 class="card-title mb-1" th:text="${item.title}"></h6>
-                        <p class="small text-secondary mb-2" th:text="${item.categoryName + ' 閻?' + item.conditionLevel}"></p>
+                        <p class="small text-secondary mb-2" th:text="${item.categoryName + ' · ' + item.conditionLevel}"></p>
                         <p class="small text-secondary flex-grow-1"
                            th:text="${item.description != null and item.description.length() > 60 ? #strings.substring(item.description, 0, 60) + '...' : item.description}"></p>
                         <div class="recommend-reason mb-2" th:text="${item.recommendReason}"></div>
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="price-text" th:text="${'婵? + item.price}"></span>
-                            <a class="btn btn-outline-primary btn-sm" th:href="@{'/goods/' + ${item.goodsId}}">闂佸搫琚崕鍐诧耿閸涱垱瀚氶柨鏃囨閸?/a>
+                            <span class="price-text" th:text="${'¥' + item.price}"></span>
+                            <a class="btn btn-outline-primary btn-sm" th:href="@{'/goods/' + ${item.goodsId}}">查看详情</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="empty-state" th:if="${hotItems == null or hotItems.isEmpty()}">
-            閻熸粎澧楅幐鍛婃櫠閻樿姹查柛灞剧⊕閿熴儵鏌熼幁鎺戝鐎规洘锕㈠畷顖炲幢濡や焦鍎岄梺鎸庣☉閻線顢氶鍌滅煓鐎广儱鎳忛崐鐢告煕閹烘鏁遍柡灞斤躬瀵濡疯缁犳瑩鏌?        </div>
+            当前暂无热门商品，稍后再来看看。
+        </div>
     </section>
 </main>
 </body>
