@@ -19,20 +19,23 @@
             <div class="card panel-card border-0 shadow-sm">
                 <div class="card-body p-0">
                     <div class="p-3 border-bottom fw-semibold">会话列表</div>
-                    <div th:if="${contacts.isEmpty()}" class="p-3 text-secondary">暂无会话，先从商品详情页联系卖家吧。</div>
-                    <a th:each="item : ${contacts}"
-                       class="d-block text-decoration-none text-reset p-3 border-bottom"
-                       th:classappend="${selectedPeerId != null and selectedPeerId == item.peerUserId ? ' bg-light' : ''}"
-                       th:href="@{'/chat?peerUserId=' + ${item.peerUserId}}">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="fw-semibold" th:text="${item.peerName}"></span>
-                            <span class="badge text-bg-danger"
-                                  th:if="${item.unreadCount != null and item.unreadCount > 0}"
-                                  th:text="${item.unreadCount}"></span>
-                        </div>
-                        <div class="small text-secondary mt-1"
-                             th:text="${item.lastMessage != null and !#strings.isEmpty(item.lastMessage) ? item.lastMessage : '暂无消息'}"></div>
-                    </a>
+                    <div id="chatContacts"
+                         th:attr="data-selected-peer-id=${selectedPeerId != null ? selectedPeerId : ''}">
+                        <div th:if="${contacts.isEmpty()}" class="p-3 text-secondary">暂无会话，先从商品详情页联系卖家吧。</div>
+                        <a th:each="item : ${contacts}"
+                           class="d-block text-decoration-none text-reset p-3 border-bottom"
+                           th:classappend="${selectedPeerId != null and selectedPeerId == item.peerUserId ? ' bg-light' : ''}"
+                           th:href="@{'/chat?peerUserId=' + ${item.peerUserId}}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-semibold" th:text="${item.peerName}"></span>
+                                <span class="badge text-bg-danger"
+                                      th:if="${item.unreadCount != null and item.unreadCount > 0}"
+                                      th:text="${item.unreadCount}"></span>
+                            </div>
+                            <div class="small text-secondary mt-1"
+                                 th:text="${item.lastMessage != null and !#strings.isEmpty(item.lastMessage) ? item.lastMessage : '暂无消息'}"></div>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -44,8 +47,11 @@
                         请选择一个会话查看消息内容。
                     </div>
 
-                    <div th:if="${selectedPeerId != null}">
-                        <div class="border rounded-3 p-3 mb-3" style="min-height: 360px; max-height: 420px; overflow-y: auto;">
+                    <div th:if="${selectedPeerId != null}"
+                         id="chatApp"
+                         th:attr="data-peer-user-id=${selectedPeerId}">
+                        <div id="chatError" class="alert alert-danger d-none mb-3"></div>
+                        <div id="chatMessages" class="border rounded-3 p-3 mb-3" style="min-height: 360px; max-height: 420px; overflow-y: auto;">
                             <div th:if="${messages == null or messages.isEmpty()}" class="text-secondary">暂无消息，发送第一条消息开始聊天。</div>
                             <div th:each="msg : ${messages}" class="mb-2 d-flex"
                                  th:classappend="${msg.mine ? ' justify-content-end' : ' justify-content-start'}">
@@ -60,13 +66,13 @@
                             </div>
                         </div>
 
-                        <form method="post" th:action="@{/chat/send}" class="row g-2">
+                        <form id="chatForm" method="post" th:action="@{/chat/send}" class="row g-2">
                             <input type="hidden" name="toUserId" th:value="${selectedPeerId}">
                             <div class="col-md-10">
-                                <input class="form-control" name="content" maxlength="500" placeholder="输入你要发送的消息" required>
+                                <input id="chatContent" class="form-control" name="content" maxlength="500" placeholder="输入你要发送的消息" required>
                             </div>
                             <div class="col-md-2 d-grid">
-                                <button class="btn btn-primary" type="submit">发送</button>
+                                <button id="chatSubmit" class="btn btn-primary" type="submit">发送</button>
                             </div>
                         </form>
                     </div>
@@ -75,5 +81,214 @@
         </div>
     </div>
 </main>
+<script th:if="${selectedPeerId != null}">
+    (() => {
+        const chatApp = document.getElementById('chatApp');
+        const contactsContainer = document.getElementById('chatContacts');
+        const messagesContainer = document.getElementById('chatMessages');
+        const chatForm = document.getElementById('chatForm');
+        const chatContent = document.getElementById('chatContent');
+        const chatSubmit = document.getElementById('chatSubmit');
+        const chatError = document.getElementById('chatError');
+
+        if (!chatApp || !contactsContainer || !messagesContainer || !chatForm || !chatContent || !chatSubmit) {
+            return;
+        }
+
+        const peerUserId = chatApp.dataset.peerUserId;
+        let lastMessageId = null;
+        let pollingTimer = null;
+        let sending = false;
+
+        const escapeHtml = (value) => {
+            const div = document.createElement('div');
+            div.textContent = value || '';
+            return div.innerHTML;
+        };
+
+        const formatDateTime = (value) => {
+            if (!value) {
+                return '-';
+            }
+            const normalized = value.replace('T', ' ');
+            const parts = normalized.split(/[- :]/);
+            if (parts.length < 5) {
+                return value;
+            }
+            return `${parts[1]}-${parts[2]} ${parts[3]}:${parts[4]}`;
+        };
+
+        const isNearBottom = () => {
+            return messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight < 80;
+        };
+
+        const scrollToBottom = () => {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        };
+
+        const showError = (message) => {
+            chatError.textContent = message;
+            chatError.classList.remove('d-none');
+        };
+
+        const hideError = () => {
+            chatError.textContent = '';
+            chatError.classList.add('d-none');
+        };
+
+        const renderMessages = (messages) => {
+            if (!Array.isArray(messages) || messages.length === 0) {
+                messagesContainer.innerHTML = '<div class="text-secondary">暂无消息，发送第一条消息开始聊天。</div>';
+                lastMessageId = null;
+                return;
+            }
+
+            messagesContainer.innerHTML = messages.map((msg) => {
+                const wrapperClass = msg.mine ? 'mb-2 d-flex justify-content-end' : 'mb-2 d-flex justify-content-start';
+                const bubbleClass = msg.mine ? 'px-3 py-2 rounded-3 text-bg-primary' : 'px-3 py-2 rounded-3 bg-light';
+                return `
+                    <div class="${wrapperClass}">
+                        <div class="${bubbleClass}" style="max-width: 75%;">
+                            <div class="small fw-semibold mb-1">${escapeHtml(msg.fromUserName || '')}</div>
+                            <div style="white-space: pre-wrap;">${escapeHtml(msg.content || '')}</div>
+                            <div class="small mt-1 opacity-75">${escapeHtml(formatDateTime(msg.createdAt))}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            lastMessageId = messages[messages.length - 1]?.messageId ?? null;
+        };
+
+        const renderContacts = (contacts) => {
+            const selectedPeerId = contactsContainer.dataset.selectedPeerId;
+            if (!Array.isArray(contacts) || contacts.length === 0) {
+                contactsContainer.innerHTML = '<div class="p-3 text-secondary">暂无会话，先从商品详情页联系卖家吧。</div>';
+                return;
+            }
+
+            contactsContainer.innerHTML = contacts.map((item) => {
+                const activeClass = String(item.peerUserId) === String(selectedPeerId) ? ' bg-light' : '';
+                const unreadBadge = item.unreadCount && item.unreadCount > 0
+                    ? `<span class="badge text-bg-danger">${escapeHtml(String(item.unreadCount))}</span>`
+                    : '';
+                const lastMessage = item.lastMessage && item.lastMessage.trim() ? item.lastMessage : '暂无消息';
+                return `
+                    <a class="d-block text-decoration-none text-reset p-3 border-bottom${activeClass}"
+                       href="/chat?peerUserId=${encodeURIComponent(item.peerUserId)}">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-semibold">${escapeHtml(item.peerName || '')}</span>
+                            ${unreadBadge}
+                        </div>
+                        <div class="small text-secondary mt-1">${escapeHtml(lastMessage)}</div>
+                    </a>
+                `;
+            }).join('');
+        };
+
+        const fetchJson = async (url, options = {}) => {
+            const requestHeaders = {
+                'X-Requested-With': 'XMLHttpRequest',
+                ...(options.headers || {})
+            };
+            const response = await fetch(url, {
+                headers: requestHeaders,
+                credentials: 'include',
+                cache: 'no-store',
+                ...options
+            });
+            if (!response.ok) {
+                throw new Error('请求失败');
+            }
+            const payload = await response.json();
+            if (!payload || payload.code !== 0) {
+                if (payload?.message && (payload.message.includes('未登录') || payload.message.includes('过期') || payload.message.includes('失效'))) {
+                    window.location.href = '/login';
+                    throw new Error(payload.message);
+                }
+                throw new Error(payload?.message || '请求失败');
+            }
+            return payload.data;
+        };
+
+        const refreshContacts = async () => {
+            const contacts = await fetchJson('/api/chat/contacts');
+            renderContacts(contacts);
+        };
+
+        const markConversationRead = async () => {
+            await fetchJson(`/api/chat/read?peerUserId=${encodeURIComponent(peerUserId)}`, {
+                method: 'POST'
+            });
+        };
+
+        const refreshMessages = async (forceScroll = false) => {
+            const shouldStickToBottom = forceScroll || isNearBottom();
+            const messages = await fetchJson(`/api/chat/messages?peerUserId=${encodeURIComponent(peerUserId)}&limit=100`);
+            const nextLastMessageId = messages.length > 0 ? messages[messages.length - 1].messageId : null;
+            if (forceScroll || nextLastMessageId !== lastMessageId) {
+                renderMessages(messages);
+                if (shouldStickToBottom) {
+                    scrollToBottom();
+                }
+            }
+        };
+
+        const refreshChat = async (forceScroll = false) => {
+            try {
+                hideError();
+                await refreshMessages(forceScroll);
+                await markConversationRead();
+                await refreshContacts();
+            } catch (error) {
+                showError(error.message || '私信刷新失败，请稍后重试。');
+            }
+        };
+
+        chatForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const content = chatContent.value.trim();
+            if (!content || sending) {
+                return;
+            }
+
+            sending = true;
+            chatSubmit.disabled = true;
+
+            try {
+                hideError();
+                await fetchJson('/api/chat/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: new URLSearchParams({
+                        toUserId: peerUserId,
+                        content
+                    }).toString()
+                });
+                chatContent.value = '';
+                await refreshChat(true);
+            } catch (error) {
+                showError(error.message || '消息发送失败，请稍后重试。');
+            } finally {
+                sending = false;
+                chatSubmit.disabled = false;
+                chatContent.focus();
+            }
+        });
+
+        scrollToBottom();
+        refreshChat(false);
+        pollingTimer = window.setInterval(() => {
+            refreshChat(false);
+        }, 3000);
+        window.addEventListener('beforeunload', () => {
+            if (pollingTimer) {
+                window.clearInterval(pollingTimer);
+            }
+        });
+    })();
+</script>
 </body>
 </html>

@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>闁荤姳闄嶉崹鐟扮暦閻旂儤瀚氶柛鏇ㄤ簽楠?- 闂佸搫绉埀顒冩珪閻ゎ喖霉濠婂啯婀板褎绮嶇粋宥夊Χ閸℃﹩娼ㄥΔ鐘靛仜閸熻儻銇?/title>
+    <title>订单评价 - 校园二手商城</title>
     <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
@@ -11,51 +11,43 @@
 <div th:replace="~{fragments/nav :: storeNav('orders', ${loggedIn})}"></div>
 
 <main class="container py-4 py-md-5 page-main">
-    <div class="row justify-content-center">
+    <div class="row g-4 justify-content-center">
         <div class="col-lg-8">
             <div class="card panel-card border-0 shadow-sm">
-                <div class="card-body p-4">
-                    <h4 class="mb-3">闁荤姳闄嶉崹鐟扮暦閻旂儤瀚氶柛鏇ㄤ簽楠?/h4>
-
+                <div class="card-body p-4 p-md-5">
+                    <h2 class="section-title mb-3">订单评价</h2>
                     <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
-                    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
 
-                    <div class="bg-light rounded-3 p-3 mb-3">
-                        <div class="small text-secondary">闁荤姳闄嶉崹鐟扮暦閻旂厧鐭?/div>
+                    <div class="mb-4">
+                        <div class="small text-secondary">订单号</div>
                         <div class="fw-semibold" th:text="${order.orderNo}"></div>
-                        <div class="small text-secondary mt-2">闂佸摜鍠庡Λ妤呭箹?/div>
-                        <div class="fw-semibold" th:text="${order.goodsTitle}"></div>
+                        <div class="small text-secondary mt-2">商品名称</div>
+                        <div th:text="${order.goodsTitle}"></div>
                     </div>
 
-                    <div th:if="${existingReview != null}">
-                        <div class="alert alert-info mb-0">
-                            婵炶揪绲挎慨鎾礄閿涘嫭瀚氶柛鏇ㄤ簽楠炲棝寮堕埡浣圭┛妞ゆ洘姘ㄩ幏瀣閻樿尙顦伴梺?span th:text="${existingReview.score}"></span> 闂佸憡甯掑Λ瀵告?                            闂佸憡鍔曢幊搴敊閹扮増鏅?span th:text="${existingReview.content != null ? existingReview.content : '闂佹寧绋戦悧濠偽涢妶澶嬫櫖?}"></span>
-                        </div>
+                    <div class="alert alert-info" th:if="${existingReview != null}">
+                        <div th:text="${'你已经提交过评价：' + existingReview.score + ' 分'}"></div>
+                        <div th:text="${existingReview.content != null and existingReview.content != '' ? existingReview.content : '未填写文字评价。'}"></div>
                     </div>
 
-                    <div th:if="${existingReview == null and order.status != 'COMPLETED'}" class="alert alert-warning mb-0">
-                        闁荤姴娲㈤崕鎾敇瑜版帒纭€闁哄洨鍋熺粔濂告煕閹惧磭肖濠殿喗鎮傞獮鈧ù锝夘棑閻熸繈鏌￠崟闈涚仚闁逞屽墯缁矂宕欓敍鍕ㄥ亾閻熺増婀伴柛銊﹀哺閸ㄦ儳鈹戦幘鍓侇槷闂佸搫妫楅崐椋庣箔婢舵劕鐭楁い鏍ㄧ箘濡叉垵霉閻樺磭浠涢柍?                    </div>
-
-                    <form th:if="${existingReview == null and order.status == 'COMPLETED'}" method="post" th:action="@{'/orders/' + ${order.orderId} + '/review'}">
+                    <form method="post" th:if="${existingReview == null}">
                         <div class="mb-3">
-                            <label class="form-label">闁荤姴娲ょ€氼剟宕?/label>
+                            <label class="form-label">评分</label>
                             <select class="form-select" name="score" required>
-                                <option value="">闁荤姴娲ㄩ崗姗€鍩€椤掆偓椤︽壆鈧哎鍔庨幏鐘诲礋椤愩垻鈧?/option>
-                                <option value="5">5 闂佸憡甯掑Λ瀵告濞嗘挻顥堥柣鎰皺閸╂绻濇繛鎯у⒉闁告挷鍗抽弫?/option>
-                                <option value="4">4 闂佸憡甯掑Λ瀵告濞嗗浚鐓ラ柍鈺佸暙婢瑰牓鏌?/option>
-                                <option value="3">3 闂佸憡甯掑Λ瀵告濞嗘劗鈻旈柍褜鍓熼幊婊堫敆婵犲嫮顦?/option>
-                                <option value="2">2 闂佸憡甯掑Λ瀵告濞嗘劗鈻旂€广儱鎳屾禍鐗堢節婵炴儳澧查柛鎾插嵆閺?/option>
-                                <option value="1">1 闂佸憡甯掑Λ瀵告濞嗗浚鍤楅柛顐ｇ矌閻熸繃绻濇繛鎯у⒉闁告挷鍗抽弫?/option>
+                                <option value="5">5 分，非常满意</option>
+                                <option value="4">4 分，比较满意</option>
+                                <option value="3">3 分，体验一般</option>
+                                <option value="2">2 分，不太满意</option>
+                                <option value="1">1 分，非常不满意</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">闁荤姴娲ょ€氼亪鎮抽鐐茬闁告侗鍙庨崯鍥煥濞戞澧曠憸鐗堢叀閺屽懏寰勫☉姘鳖槴</label>
-                            <textarea class="form-control" name="content" rows="4" maxlength="255" placeholder="请填写本次交易的真实体验，帮助其他同学判断"></textarea>
+                            <label class="form-label">评价内容</label>
+                            <textarea class="form-control" rows="5" maxlength="500" name="content"
+                                      placeholder="可以填写商品情况、沟通体验、交易过程等"></textarea>
                         </div>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-primary" type="submit">闂佸湱绮崝鎺戭潩閿旂偓瀚氶柛鏇ㄤ簽楠?/button>
-                            <a class="btn btn-outline-secondary" th:href="@{/orders}">闁哄鏅滈弻銊ッ洪弽顐ｅ闁靛繒濮寸粈?/a>
-                        </div>
+                        <button class="btn btn-primary" type="submit">提交评价</button>
+                        <a class="btn btn-outline-secondary" th:href="@{/orders}">返回订单</a>
                     </form>
                 </div>
             </div>

@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>闂佸憡甯掑Λ娑氭偖椤愩倗涓嶉柨娑樺閸?- 闂佸憡鑹炬姝屻亹閹绢喖绠崇憸宥夊春濡ゅ懎鐭?/title>
+    <title>分类管理 - 校园二手商城</title>
     <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
@@ -11,13 +11,13 @@
 <div th:replace="~{fragments/nav :: adminNav('categories', ${adminName})}"></div>
 
 <main class="container py-4 py-md-5 page-main">
-    <h2 class="section-title mb-3">闂佸憡甯掑Λ娑氭偖椤愩倗涓嶉柨娑樺閸?/h2>
+    <h2 class="section-title mb-3">分类管理</h2>
     <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
     <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
     <div class="card panel-card border-0 shadow-sm mb-3">
         <div class="card-body">
-            <h6 class="mb-3">闂佸搫鍊瑰姗€路閸愵喖绀嗛柛鈩冪懆椤?/h6>
+            <h6 class="mb-3">新增分类</h6>
             <form class="row g-2" method="post" th:action="@{/admin/categories/create}">
                 <div class="col-md-6">
                     <input class="form-control" name="name" maxlength="64" placeholder="例如：数码电子" required>
@@ -26,7 +26,7 @@
                     <input class="form-control" name="sortNo" type="number" placeholder="数字越小越靠前">
                 </div>
                 <div class="col-md-2 d-grid">
-                    <button class="btn btn-primary" type="submit">闂佸搫鍊瑰姗€路?/button>
+                    <button class="btn btn-primary" type="submit">新增</button>
                 </div>
             </form>
         </div>
@@ -36,16 +36,16 @@
         <table class="table align-middle mb-0">
             <thead>
             <tr>
-                <th>缂傚倸鍊归悧鏇°亹?/th>
-                <th>闂佸憡鑹剧粔鎯扳叿</th>
-                <th>闂佸湱鍎ょ敮鎺旇姳?/th>
-                <th>闂佺粯顭堥崺鏍焵?/th>
-                <th class="text-end">闂佺懓鐏濈粔宕囩礊?/th>
+                <th>ID</th>
+                <th>分类名称</th>
+                <th>排序值</th>
+                <th>状态</th>
+                <th class="text-end">操作</th>
             </tr>
             </thead>
             <tbody>
             <tr th:if="${categories.isEmpty()}">
-                <td colspan="5" class="text-center text-secondary py-4">闂佸搫妫楅崐鐟拔涢妶澶婄闁糕剝鐟ㄩ～?/td>
+                <td colspan="5" class="text-center text-secondary py-4">当前没有分类数据。</td>
             </tr>
             <tr th:each="item : ${categories}">
                 <form method="post" th:action="@{'/admin/categories/' + ${item.categoryId} + '/update'}">
@@ -54,12 +54,12 @@
                     <td><input class="form-control form-control-sm" name="sortNo" type="number" th:value="${item.sortNo}" required></td>
                     <td>
                         <select class="form-select form-select-sm" name="status">
-                            <option value="1" th:selected="${item.status == 1}">闂佸憡鍑归崹鎶藉极?/option>
-                            <option value="0" th:selected="${item.status == 0}">闂佺顑嗙划搴ㄥ极?/option>
+                            <option value="1" th:selected="${item.status == 1}">启用</option>
+                            <option value="0" th:selected="${item.status == 0}">停用</option>
                         </select>
                     </td>
                     <td class="text-end">
-                        <button class="btn btn-sm btn-outline-primary" type="submit">婵烇絽娲︾换鍌炴偤?/button>
+                        <button class="btn btn-sm btn-outline-primary" type="submit">保存</button>
                     </td>
                 </form>
             </tr>

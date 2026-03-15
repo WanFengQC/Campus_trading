@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>闁荤姳闄嶉崐婵嬨€傞銈嗗闁哄娉曠粔?- 闂佸搫绉埀顒冩珪閻ゎ喖霉濠婂啯婀板褎绮嶇粋宥夊Χ閸℃﹩娼ㄥΔ鐘靛仜閸熻儻銇?/title>
+    <title>认领记录 - 校园二手商城</title>
     <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
@@ -11,25 +11,22 @@
 <div th:replace="~{fragments/nav :: storeNav('donations', ${loggedIn})}"></div>
 
 <main class="container py-4 py-md-5 page-main">
-    <h2 class="section-title mb-3">闁荤姳闄嶉崐婵嬨€傞銈嗗闁哄娉曠粔?/h2>
+    <h2 class="section-title mb-3">认领记录</h2>
     <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
     <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
-    <div class="empty-state" th:if="${records.isEmpty()}">
-        闂佸搫妫楅崐鐟拔涢妶鍥ㄥ闁靛牆顦介弳娆撴偣娴ｈ绶茬紓宥呯Ч婵?    </div>
+    <div class="empty-state" th:if="${records.isEmpty()}">当前还没有你作为认领方发起的记录。</div>
 
     <div class="d-grid gap-3" th:if="${!records.isEmpty()}">
         <div class="card panel-card border-0 shadow-sm" th:each="record : ${records}">
             <div class="card-body">
                 <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
                     <div>
-                        <div class="fw-semibold mb-1">
-                            闁荤姳鐒﹀妯肩礊瀹ュ鐭楅柛鎴欏€楃粣?span th:text="${record.recordId}"></span>
-                        </div>
+                        <div class="fw-semibold mb-1" th:text="${'记录 #' + record.recordId}"></div>
                         <div class="small text-secondary">
-                            <span th:text="${record.donorSide ? '闂佺懓鐡ㄩ崹璺何ｉ幖浣哥闁归偊鍨抽々鐑芥煛? : '闂佺懓鐡ㄩ崹璺何ｉ崫銉﹀闁靛牆顦介弳娆撴煛?}"></span>
+                            <span>你是认领方</span>
                             <span class="mx-2">|</span>
-                            闂佸憡甯楃粙鎴犵磽閹捐绫嶉柛顐ｆ礃閿涚喖鏌?span th:text="${#temporals.format(record.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                            <span th:text="${#temporals.format(record.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
                         </div>
                     </div>
                     <span class="badge order-badge" th:text="${record.statusLabel}"></span>
@@ -43,43 +40,29 @@
                                  alt="捐赠物品封面">
                             <div>
                                 <div class="fw-semibold" th:text="${record.donationTitle}"></div>
-                                <div class="small text-secondary">闂佺顫夐崝妯肩矉閹烘妫橀柣褍鎽滅粣?                                    <span th:text="${record.donorName}"></span>
-                                </div>
-                                <div class="small text-secondary">闁荤姳闄嶉崐婵嬨€傞锕€妫橀柣褍鎽滅粣?                                    <span th:text="${record.claimerName}"></span>
-                                </div>
-                                <div class="small text-secondary" th:if="${record.claimRemark != null and record.claimRemark != ''}">
-                                    闂佹眹鍨归悿鍥敋椤掑倹瀚氶悗娑櫳戦～鏍煥?span th:text="${record.claimRemark}"></span>
-                                </div>
+                                <div class="small text-secondary" th:text="${'捐赠方：' + record.donorName}"></div>
+                                <div class="small text-secondary" th:text="${'认领方：' + record.claimerName}"></div>
+                                <div class="small text-secondary"
+                                     th:if="${record.claimRemark != null and record.claimRemark != ''}"
+                                     th:text="${'认领备注：' + record.claimRemark}"></div>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-md-5">
                         <div class="d-flex justify-content-md-end align-items-center gap-2 flex-wrap">
-                            <a class="btn btn-sm btn-outline-secondary" th:href="@{'/donations/' + ${record.donationItemId}}">闂佸搫琚崕鍐诧耿閸涘瓨鍋嬮柍杞扮劍閹?/a>
+                            <a class="btn btn-sm btn-outline-secondary" th:href="@{'/donations/' + ${record.donationItemId}}">查看物品</a>
 
-                            <form th:if="${record.claimerSide and record.status == 'PENDING'}"
+                            <form th:if="${record.status == 'PENDING'}"
                                   method="post"
                                   th:action="@{'/donation-records/' + ${record.recordId} + '/cancel'}">
-                                <button class="btn btn-sm btn-outline-danger" type="submit">闂佸憡鐟﹂悧妤冪矓閻戣姤鍋ㄩ悗鍦閸?/button>
+                                <button class="btn btn-sm btn-outline-danger" type="submit">取消申请</button>
                             </form>
 
-                            <form th:if="${record.donorSide and record.status == 'PENDING'}"
-                                  method="post"
-                                  th:action="@{'/donation-records/' + ${record.recordId} + '/approve'}">
-                                <button class="btn btn-sm btn-primary" type="submit">闂佸憡鑹鹃張顒勫礈閹殿喗濯奸柕鍫濐樈閺?/button>
-                            </form>
-
-                            <form th:if="${record.donorSide and record.status == 'PENDING'}"
-                                  method="post"
-                                  th:action="@{'/donation-records/' + ${record.recordId} + '/reject'}">
-                                <button class="btn btn-sm btn-outline-secondary" type="submit">闂佸綊鏀辩敮鐐靛垝?/button>
-                            </form>
-
-                            <form th:if="${record.claimerSide and record.status == 'APPROVED'}"
+                            <form th:if="${record.status == 'APPROVED'}"
                                   method="post"
                                   th:action="@{'/donation-records/' + ${record.recordId} + '/complete'}">
-                                <button class="btn btn-sm btn-success" type="submit">缂佺虎鍙庨崰娑㈩敇鐠囧樊鍟呴柡灞诲労閺嗘瑩鏌?/button>
+                                <button class="btn btn-sm btn-success" type="submit">确认完成</button>
                             </form>
                         </div>
                     </div>

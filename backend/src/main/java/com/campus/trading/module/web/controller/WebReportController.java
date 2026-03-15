@@ -15,6 +15,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class WebReportController {
 
+    private static final String TARGET_TYPE_GOODS = "GOODS";
+
     private final ReportService reportService;
 
     public WebReportController(ReportService reportService) {
@@ -29,8 +31,12 @@ public class WebReportController {
         if (getLoginUserId(session) == null) {
             return "redirect:/login";
         }
-        model.addAttribute("targetType", targetType);
+        if (targetId == null || targetId <= 0) {
+            return "redirect:/goods";
+        }
+        model.addAttribute("targetType", TARGET_TYPE_GOODS);
         model.addAttribute("targetId", targetId);
+        model.addAttribute("loggedIn", true);
         return "pages/report-create";
     }
 
@@ -45,13 +51,17 @@ public class WebReportController {
         if (userId == null) {
             return "redirect:/login";
         }
+        if (!TARGET_TYPE_GOODS.equalsIgnoreCase(targetType)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "当前仅支持商品举报");
+            return "redirect:/reports/create?targetId=" + targetId;
+        }
         try {
-            reportService.createReport(userId, targetType, targetId, reason, detail);
+            reportService.createReport(userId, TARGET_TYPE_GOODS, targetId, reason, detail);
             redirectAttributes.addFlashAttribute("successMessage", "举报已提交，我们会尽快处理");
             return "redirect:/reports/my";
         } catch (BusinessException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
-            return "redirect:/reports/create?targetType=" + targetType + "&targetId=" + targetId;
+            return "redirect:/reports/create?targetId=" + targetId;
         }
     }
 
@@ -62,6 +72,7 @@ public class WebReportController {
             return "redirect:/login";
         }
         model.addAttribute("items", reportService.listUserReports(userId));
+        model.addAttribute("loggedIn", true);
         return "pages/report-my";
     }
 

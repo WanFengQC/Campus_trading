@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>闂佺顫夐崝妯肩矉閹烘梻涓嶉柨娑樺閸?- 闂佸憡鑹炬姝屻亹閹绢喖绠崇憸宥夊春濡ゅ懎鐭?/title>
+    <title>捐赠管理 - 校园二手商城</title>
     <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
@@ -11,7 +11,7 @@
 <div th:replace="~{fragments/nav :: adminNav('donations', ${adminName})}"></div>
 
 <main class="container py-4 py-md-5 page-main">
-    <h2 class="section-title mb-3">闂佺顫夐崝妯肩矉閹烘挾鈹嶉柍鈺佸暕缁辨牜绱掗悪鍛？闁?/h2>
+    <h2 class="section-title mb-3">捐赠管理</h2>
     <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
     <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
@@ -23,15 +23,15 @@
                 </div>
                 <div class="col-md-4">
                     <select class="form-select" name="itemStatus">
-                        <option value="">闂佺绻堥崝鎴﹀磿閹绢喗鍋嬮柍杞扮劍閹倿鏌ｅΟ鍨厫闁?/option>
-                        <option value="AVAILABLE" th:selected="${itemStatus == 'AVAILABLE'}">闂佸憡鐟崹鐢割敇缂佹﹫绱?/option>
-                        <option value="CLAIM_PENDING" th:selected="${itemStatus == 'CLAIM_PENDING'}">闁荤姳闄嶉崐婵嬨€傞锔藉仺閻庡湱濯崵鐐测槈?/option>
-                        <option value="CLAIMED" th:selected="${itemStatus == 'CLAIMED'}">閻庤鐡曠亸顏堬綖閿旂偓濯奸柕鍫濐樈閺?/option>
-                        <option value="OFF_SHELF" th:selected="${itemStatus == 'OFF_SHELF'}">閻庤鐡曞鎾剁箔閸涙潙鍑?/option>
+                        <option value="">全部物品状态</option>
+                        <option value="AVAILABLE" th:selected="${itemStatus == 'AVAILABLE'}">可认领</option>
+                        <option value="CLAIM_PENDING" th:selected="${itemStatus == 'CLAIM_PENDING'}">认领申请中</option>
+                        <option value="CLAIMED" th:selected="${itemStatus == 'CLAIMED'}">已被认领</option>
+                        <option value="OFF_SHELF" th:selected="${itemStatus == 'OFF_SHELF'}">已下架</option>
                     </select>
                 </div>
                 <div class="col-md-3 d-grid">
-                    <button class="btn btn-primary" type="submit">缂備焦绋掗惄顖炲焵椤掆偓椤﹁鲸鏅堕崸妤€浼?/button>
+                    <button class="btn btn-primary" type="submit">筛选物品</button>
                 </div>
             </form>
         </div>
@@ -41,20 +41,20 @@
         <table class="table align-middle mb-0">
             <thead>
             <tr>
-                <th>闂佺粯銇涢弲娑㈠箹椤粚</th>
-                <th>闂佸搫绉村ú顓€?/th>
-                <th>闂佺顫夐崝妯肩矉閹烘挾顩?/th>
-                <th>闂佸憡甯掑Λ娑氭偖?/th>
-                <th>闂佽壈椴稿濠氭焾閹绢喖妫橀柣鐔稿绾偓</th>
-                <th>闂佸憡鐟﹂悧鏂库枎閵忋倕鎹堕柡澶嬪缁?/th>
-                <th>闂佺粯顭堥崺鏍焵?/th>
-                <th>闂佸憡鐟﹂崹鐢电博閻戣棄绫嶉柛顐ｆ礃閿?/th>
-                <th class="text-end">闂佺懓鐏濈粔宕囩礊?/th>
+                <th>ID</th>
+                <th>物品标题</th>
+                <th>捐赠人</th>
+                <th>分类</th>
+                <th>联系方式</th>
+                <th>取件地点</th>
+                <th>状态</th>
+                <th>发布时间</th>
+                <th class="text-end">操作</th>
             </tr>
             </thead>
             <tbody>
             <tr th:if="${items.isEmpty()}">
-                <td colspan="9" class="text-center text-secondary py-4">闂佸搫妫楅崐鐟拔涢妶澶婄闁归偊鍨抽々鐑芥煟濡炵粯娅呴柟?/td>
+                <td colspan="9" class="text-center text-secondary py-4">当前没有符合条件的捐赠物品。</td>
             </tr>
             <tr th:each="item : ${items}">
                 <td th:text="${item.itemId}"></td>
@@ -62,18 +62,18 @@
                 <td th:text="${item.donorName}"></td>
                 <td th:text="${item.categoryName}"></td>
                 <td th:text="${item.contactInfo}"></td>
-                <td th:text="${item.pickupAddress}"></td>
+                <td th:text="${item.pickupAddress != null and item.pickupAddress != '' ? item.pickupAddress : '-'}"></td>
                 <td><span class="badge order-badge" th:text="${item.statusLabel}"></span></td>
                 <td th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
                 <td class="text-end">
-                    <form class="d-inline" method="post" th:action="@{'/admin/donations/items/' + ${item.itemId} + '/status'}">
-                        <select class="form-select form-select-sm d-inline-block" style="width: 170px;" name="status">
-                            <option value="AVAILABLE" th:selected="${item.status == 'AVAILABLE'}">闂佸憡鐟崹鐢割敇缂佹﹫绱?/option>
-                            <option value="CLAIM_PENDING" th:selected="${item.status == 'CLAIM_PENDING'}">闁荤姳闄嶉崐婵嬨€傞锔藉仺閻庡湱濯崵鐐测槈?/option>
-                            <option value="CLAIMED" th:selected="${item.status == 'CLAIMED'}">閻庤鐡曠亸顏堬綖閿旂偓濯奸柕鍫濐樈閺?/option>
-                            <option value="OFF_SHELF" th:selected="${item.status == 'OFF_SHELF'}">閻庤鐡曞鎾剁箔閸涙潙鍑?/option>
+                    <form class="d-inline-flex align-items-center gap-2" method="post" th:action="@{'/admin/donations/items/' + ${item.itemId} + '/status'}">
+                        <select class="form-select form-select-sm" style="width: 170px;" name="status">
+                            <option value="AVAILABLE" th:selected="${item.status == 'AVAILABLE'}">可认领</option>
+                            <option value="CLAIM_PENDING" th:selected="${item.status == 'CLAIM_PENDING'}">认领申请中</option>
+                            <option value="CLAIMED" th:selected="${item.status == 'CLAIMED'}">已被认领</option>
+                            <option value="OFF_SHELF" th:selected="${item.status == 'OFF_SHELF'}">已下架</option>
                         </select>
-                        <button class="btn btn-sm btn-outline-primary" type="submit">闂佸搫娲ら悺銊╁蓟?/button>
+                        <button class="btn btn-sm btn-outline-primary" type="submit">更新</button>
                     </form>
                 </td>
             </tr>
@@ -88,16 +88,16 @@
                 <input type="hidden" name="itemStatus" th:value="${itemStatus}">
                 <div class="col-md-9">
                     <select class="form-select" name="recordStatus">
-                        <option value="">闂佺绻堥崝鎴﹀磿鐎靛憡濯奸柕鍫濐樈閺嗘瑩鎮规担瑙勭凡缂傚秴绉归幃鈺呮嚋绾版ê浜?/option>
-                        <option value="PENDING" th:selected="${recordStatus == 'PENDING'}">閻庡灚婢橀幊搴ㄋ囬埡鍛仩?/option>
-                        <option value="APPROVED" th:selected="${recordStatus == 'APPROVED'}">閻庣懓鎲¤ぐ鍐箖閹捐绠?/option>
-                        <option value="REJECTED" th:selected="${recordStatus == 'REJECTED'}">閻庡湱顭堝鍓佲偓姘缁?/option>
-                        <option value="CANCELLED" th:selected="${recordStatus == 'CANCELLED'}">閻庣懓鎲¤ぐ鍐亹閸パ€妲?/option>
-                        <option value="COMPLETED" th:selected="${recordStatus == 'COMPLETED'}">閻庣懓鎲¤ぐ鍐偩椤掑嫬绠?/option>
+                        <option value="">全部认领记录状态</option>
+                        <option value="PENDING" th:selected="${recordStatus == 'PENDING'}">待处理</option>
+                        <option value="APPROVED" th:selected="${recordStatus == 'APPROVED'}">已同意</option>
+                        <option value="REJECTED" th:selected="${recordStatus == 'REJECTED'}">已拒绝</option>
+                        <option value="CANCELLED" th:selected="${recordStatus == 'CANCELLED'}">已取消</option>
+                        <option value="COMPLETED" th:selected="${recordStatus == 'COMPLETED'}">已完成</option>
                     </select>
                 </div>
                 <div class="col-md-3 d-grid">
-                    <button class="btn btn-primary" type="submit">缂備焦绋掗惄顖炲焵椤掆偓椤︽娊顢欓崶顏備汗?/button>
+                    <button class="btn btn-primary" type="submit">筛选记录</button>
                 </div>
             </form>
         </div>
@@ -107,38 +107,38 @@
         <table class="table align-middle mb-0">
             <thead>
             <tr>
-                <th>闁荤姳鐒﹀妯肩礊瀹€绫?/th>
-                <th>闂佺顫夐崝妯肩矉閹烘鍋嬮柍杞扮劍閹?/th>
-                <th>闂佺顫夐崝妯肩矉閹烘挾顩?/th>
-                <th>闁荤姳闄嶉崐婵嬨€傞锝囶洸?/th>
-                <th>闂佹眹鍨归悿鍥敋椤掍礁绶為柛銉ｅ妽閺?/th>
-                <th>闂佺粯顭堥崺鏍焵?/th>
-                <th>闂佹眹鍨归悿鍥敋椤掑嫬绫嶉柛顐ｆ礃閿?/th>
-                <th class="text-end">闂佺懓鐏濈粔宕囩礊?/th>
+                <th>ID</th>
+                <th>捐赠物品</th>
+                <th>捐赠人</th>
+                <th>认领人</th>
+                <th>认领备注</th>
+                <th>状态</th>
+                <th>申请时间</th>
+                <th class="text-end">操作</th>
             </tr>
             </thead>
             <tbody>
             <tr th:if="${records.isEmpty()}">
-                <td colspan="8" class="text-center text-secondary py-4">闂佸搫妫楅崐鐟拔涢妶鍥ㄥ闁靛牆顦介弳娆撴偣娴ｈ绶茬紓?/td>
+                <td colspan="8" class="text-center text-secondary py-4">当前没有符合条件的认领记录。</td>
             </tr>
             <tr th:each="record : ${records}">
                 <td th:text="${record.recordId}"></td>
                 <td th:text="${record.donationTitle}"></td>
                 <td th:text="${record.donorName}"></td>
                 <td th:text="${record.claimerName}"></td>
-                <td th:text="${record.claimRemark}"></td>
+                <td th:text="${record.claimRemark != null and record.claimRemark != '' ? record.claimRemark : '-'}"></td>
                 <td><span class="badge order-badge" th:text="${record.statusLabel}"></span></td>
                 <td th:text="${#temporals.format(record.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
                 <td class="text-end">
-                    <form class="d-inline" method="post" th:action="@{'/admin/donations/records/' + ${record.recordId} + '/status'}">
-                        <select class="form-select form-select-sm d-inline-block" style="width: 170px;" name="status">
-                            <option value="PENDING" th:selected="${record.status == 'PENDING'}">閻庡灚婢橀幊搴ㄋ囬埡鍛仩?/option>
-                            <option value="APPROVED" th:selected="${record.status == 'APPROVED'}">閻庣懓鎲¤ぐ鍐箖閹捐绠?/option>
-                            <option value="REJECTED" th:selected="${record.status == 'REJECTED'}">閻庡湱顭堝鍓佲偓姘缁?/option>
-                            <option value="CANCELLED" th:selected="${record.status == 'CANCELLED'}">閻庣懓鎲¤ぐ鍐亹閸パ€妲?/option>
-                            <option value="COMPLETED" th:selected="${record.status == 'COMPLETED'}">閻庣懓鎲¤ぐ鍐偩椤掑嫬绠?/option>
+                    <form class="d-inline-flex align-items-center gap-2" method="post" th:action="@{'/admin/donations/records/' + ${record.recordId} + '/status'}">
+                        <select class="form-select form-select-sm" style="width: 170px;" name="status">
+                            <option value="PENDING" th:selected="${record.status == 'PENDING'}">待处理</option>
+                            <option value="APPROVED" th:selected="${record.status == 'APPROVED'}">已同意</option>
+                            <option value="REJECTED" th:selected="${record.status == 'REJECTED'}">已拒绝</option>
+                            <option value="CANCELLED" th:selected="${record.status == 'CANCELLED'}">已取消</option>
+                            <option value="COMPLETED" th:selected="${record.status == 'COMPLETED'}">已完成</option>
                         </select>
-                        <button class="btn btn-sm btn-outline-primary" type="submit">闂佸搫娲ら悺銊╁蓟?/button>
+                        <button class="btn btn-sm btn-outline-primary" type="submit">更新</button>
                     </form>
                 </td>
             </tr>

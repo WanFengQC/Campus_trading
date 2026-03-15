@@ -11,6 +11,8 @@ import com.campus.trading.module.goods.dto.GoodsDetailResponse;
 import com.campus.trading.module.goods.dto.GoodsQueryRequest;
 import com.campus.trading.module.goods.dto.GoodsSaveRequest;
 import com.campus.trading.module.goods.service.GoodsService;
+import com.campus.trading.module.order.dto.OrderItemResponse;
+import com.campus.trading.module.order.service.TradeOrderService;
 import com.campus.trading.module.review.service.ReviewService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -25,6 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -37,19 +40,22 @@ public class WebGoodsController {
     private final BrowseHistoryService browseHistoryService;
     private final FileStorageService fileStorageService;
     private final ReviewService reviewService;
+    private final TradeOrderService tradeOrderService;
 
     public WebGoodsController(GoodsService goodsService,
                               CategoryService categoryService,
                               FavoriteService favoriteService,
                               BrowseHistoryService browseHistoryService,
                               FileStorageService fileStorageService,
-                              ReviewService reviewService) {
+                              ReviewService reviewService,
+                              TradeOrderService tradeOrderService) {
         this.goodsService = goodsService;
         this.categoryService = categoryService;
         this.favoriteService = favoriteService;
         this.browseHistoryService = browseHistoryService;
         this.fileStorageService = fileStorageService;
         this.reviewService = reviewService;
+        this.tradeOrderService = tradeOrderService;
     }
 
     @GetMapping("/goods")
@@ -86,14 +92,18 @@ public class WebGoodsController {
                               HttpSession session,
                               RedirectAttributes redirectAttributes) {
         Long userId = getLoginUserId(session);
+        boolean adminView = getAdminId(session) != null;
         try {
-            GoodsDetailResponse goods = goodsService.getGoodsDetailForViewer(id, userId);
-            if (userId != null) {
+            GoodsDetailResponse goods = adminView
+                ? goodsService.getGoodsDetailForAdmin(id)
+                : goodsService.getGoodsDetailForViewer(id, userId);
+            if (userId != null && !adminView) {
                 browseHistoryService.recordView(userId, id);
             }
             model.addAttribute("goods", goods);
             model.addAttribute("reviews", reviewService.listGoodsReviews(id));
             model.addAttribute("loggedIn", userId != null);
+            model.addAttribute("adminView", adminView);
             model.addAttribute("favorited", userId != null && favoriteService.isFavorited(userId, id));
             model.addAttribute("sellerView", userId != null && userId.equals(goods.getSellerId()));
             return "pages/goods-detail";
@@ -154,7 +164,17 @@ public class WebGoodsController {
         if (userId == null) {
             return "redirect:/login";
         }
+        List<OrderItemResponse> sellerOrders = tradeOrderService.listSellerOrders(userId);
+        Set<Long> soldGoodsIds = new LinkedHashSet<>();
+        for (OrderItemResponse order : sellerOrders) {
+            if (order.getGoodsId() != null && !"CANCELLED".equals(order.getStatus())) {
+                soldGoodsIds.add(order.getGoodsId());
+            }
+        }
         model.addAttribute("items", goodsService.listSellerGoods(userId));
+        model.addAttribute("sellerOrders", sellerOrders);
+        model.addAttribute("soldGoodsIds", soldGoodsIds);
+        model.addAttribute("loggedIn", true);
         return "pages/goods-my";
     }
 
@@ -183,6 +203,7 @@ public class WebGoodsController {
 
         model.addAttribute("categories", categoryService.listActiveCategories());
         model.addAttribute("goods", goods);
+        model.addAttribute("loggedIn", true);
         return "pages/goods-edit";
     }
 
@@ -229,7 +250,7 @@ public class WebGoodsController {
             request.setCoverImageUrl(imageUrl);
 
             goodsService.updateGoods(userId, id, request);
-            redirectAttributes.addFlashAttribute("successMessage", "商品已提交重新审核，审核通过后自动上架");
+            redirectAttributes.addFlashAttribute("successMessage", "商品已重新提交审核，审核通过后自动上架");
             return "redirect:/goods/" + id;
         } catch (BusinessException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
@@ -277,6 +298,17 @@ public class WebGoodsController {
         }
         if (value instanceof Integer userId) {
             return userId.longValue();
+        }
+        return null;
+    }
+
+    private Long getAdminId(HttpSession session) {
+        Object value = session.getAttribute(WebSessionKeys.ADMIN_USER_ID);
+        if (value instanceof Long adminId) {
+            return adminId;
+        }
+        if (value instanceof Integer adminId) {
+            return adminId.longValue();
         }
         return null;
     }

@@ -134,6 +134,26 @@ public class TradeOrderServiceImpl implements TradeOrderService {
         List<TradeOrderEntity> orders = tradeOrderMapper.selectList(new LambdaQueryWrapper<TradeOrderEntity>()
             .and(w -> w.eq(TradeOrderEntity::getBuyerId, userId).or().eq(TradeOrderEntity::getSellerId, userId))
             .orderByDesc(TradeOrderEntity::getCreatedAt));
+        return toOrderItems(orders, userId);
+    }
+
+    @Override
+    public List<OrderItemResponse> listBuyerOrders(Long buyerId) {
+        List<TradeOrderEntity> orders = tradeOrderMapper.selectList(new LambdaQueryWrapper<TradeOrderEntity>()
+            .eq(TradeOrderEntity::getBuyerId, buyerId)
+            .orderByDesc(TradeOrderEntity::getCreatedAt));
+        return toOrderItems(orders, buyerId);
+    }
+
+    @Override
+    public List<OrderItemResponse> listSellerOrders(Long sellerId) {
+        List<TradeOrderEntity> orders = tradeOrderMapper.selectList(new LambdaQueryWrapper<TradeOrderEntity>()
+            .eq(TradeOrderEntity::getSellerId, sellerId)
+            .orderByDesc(TradeOrderEntity::getCreatedAt));
+        return toOrderItems(orders, sellerId);
+    }
+
+    private List<OrderItemResponse> toOrderItems(List<TradeOrderEntity> orders, Long currentUserId) {
         if (orders.isEmpty()) {
             return new ArrayList<>();
         }
@@ -143,7 +163,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 
         List<OrderItemResponse> results = new ArrayList<>();
         for (TradeOrderEntity order : orders) {
-            results.add(toOrderItem(order, userId, goodsMap, userMap));
+            results.add(toOrderItem(order, currentUserId, goodsMap, userMap));
         }
         return results;
     }
@@ -210,7 +230,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
                              String meetupNote) {
         TradeOrderEntity order = getAccessibleOrderOrThrow(userId, orderId);
         if (ORDER_STATUS_COMPLETED.equals(order.getStatus()) || ORDER_STATUS_CANCELLED.equals(order.getStatus())) {
-            throw new BusinessException("当前订单状态不可修改验货信息");
+            throw new BusinessException("当前订单状态不可修改见面信息");
         }
 
         String normalizedMeetupLocation = sanitizeMeetupLocation(meetupLocation);
@@ -228,7 +248,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
         order.setMeetupNote(normalizedMeetupNote);
         tradeOrderMapper.updateById(order);
 
-        String note = "更新验货信息";
+        String note = "更新见面信息";
         if (StringUtils.hasText(normalizedMeetupLocation)) {
             note += "，地点：" + normalizedMeetupLocation;
         }
@@ -273,7 +293,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
         String fromStatus = order.getStatus();
         order.setStatus(ORDER_STATUS_SELLER_CONFIRMED);
         tradeOrderMapper.updateById(order);
-        appendOrderLog(order.getId(), sellerId, "SELLER_CONFIRM", fromStatus, ORDER_STATUS_SELLER_CONFIRMED, "卖家确认可交易");
+        appendOrderLog(order.getId(), sellerId, "SELLER_CONFIRM", fromStatus, ORDER_STATUS_SELLER_CONFIRMED, "卖家确认接单");
     }
 
     @Override
@@ -423,7 +443,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
             return "买家确认收货";
         }
         if ("MEETUP_UPDATE".equals(action)) {
-            return "更新验货信息";
+            return "更新见面信息";
         }
         return "状态流转";
     }

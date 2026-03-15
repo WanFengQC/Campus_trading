@@ -18,18 +18,91 @@
     </div>
 
     <div class="d-grid gap-3" th:if="${!items.isEmpty()}">
-        <article class="card panel-card border-0 shadow-sm" th:each="item : ${items}">
-            <div class="card-body">
+        <button type="button"
+                class="notice-item-button card panel-card border-0 shadow-sm"
+                th:each="item : ${items}"
+                th:attr="data-notice-title=${item.title},
+                         data-notice-publisher=${item.publisher},
+                         data-notice-time=${item.createdAt != null ? #temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm') : '-'},
+                         data-notice-content=${item.content}">
+            <div class="card-body text-start">
                 <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
                     <h5 class="mb-2" th:text="${item.title}"></h5>
                     <span class="small text-secondary"
                           th:text="${item.createdAt != null ? #temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm') : '-'}"></span>
                 </div>
                 <div class="text-secondary small mb-2" th:text="${'发布人：' + item.publisher}"></div>
-                <p class="mb-0" style="white-space: pre-wrap;" th:text="${item.content}"></p>
+                <p class="mb-0" style="white-space: pre-wrap;"
+                   th:text="${item.content != null and item.content.length() > 120 ? #strings.substring(item.content, 0, 120) + '...' : item.content}"></p>
             </div>
-        </article>
+        </button>
     </div>
 </main>
+
+<div class="notice-modal" id="noticeModal" aria-hidden="true">
+    <div class="notice-modal-backdrop" data-notice-close></div>
+    <div class="notice-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="noticeModalTitle">
+        <div class="notice-modal-header">
+            <div>
+                <div class="notice-modal-kicker">商城公告</div>
+                <h3 class="notice-modal-title" id="noticeModalTitle">公告详情</h3>
+            </div>
+            <button type="button" class="notice-modal-close" data-notice-close aria-label="关闭">×</button>
+        </div>
+        <div class="notice-modal-meta">
+            <span id="noticeModalPublisher">发布人：</span>
+            <span id="noticeModalTime"></span>
+        </div>
+        <div class="notice-modal-content" id="noticeModalContent"></div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const modal = document.getElementById("noticeModal");
+        const title = document.getElementById("noticeModalTitle");
+        const publisher = document.getElementById("noticeModalPublisher");
+        const time = document.getElementById("noticeModalTime");
+        const content = document.getElementById("noticeModalContent");
+        const triggers = document.querySelectorAll(".notice-item-button");
+        const closers = modal ? modal.querySelectorAll("[data-notice-close]") : [];
+
+        if (!modal || !title || !publisher || !time || !content || !triggers.length) {
+            return;
+        }
+
+        const closeModal = function () {
+            modal.classList.remove("is-open");
+            modal.setAttribute("aria-hidden", "true");
+            document.body.classList.remove("notice-modal-open");
+        };
+
+        const openModal = function (trigger) {
+            title.textContent = trigger.dataset.noticeTitle || "公告详情";
+            publisher.textContent = "发布人：" + (trigger.dataset.noticePublisher || "系统管理员");
+            time.textContent = trigger.dataset.noticeTime || "";
+            content.textContent = trigger.dataset.noticeContent || "";
+            modal.classList.add("is-open");
+            modal.setAttribute("aria-hidden", "false");
+            document.body.classList.add("notice-modal-open");
+        };
+
+        triggers.forEach(function (trigger) {
+            trigger.addEventListener("click", function () {
+                openModal(trigger);
+            });
+        });
+
+        closers.forEach(function (closer) {
+            closer.addEventListener("click", closeModal);
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape" && modal.classList.contains("is-open")) {
+                closeModal();
+            }
+        });
+    })();
+</script>
 </body>
 </html>

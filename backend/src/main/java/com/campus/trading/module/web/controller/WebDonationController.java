@@ -44,8 +44,9 @@ public class WebDonationController {
     }
 
     @GetMapping("/donations/{id}")
-    public String detail(@PathVariable("id") Long id, Model model) {
+    public String detail(@PathVariable("id") Long id, Model model, HttpSession session) {
         model.addAttribute("item", donationService.getDetail(id));
+        model.addAttribute("loggedIn", getLoginUserId(session) != null);
         return "pages/donation-detail";
     }
 
@@ -55,6 +56,7 @@ public class WebDonationController {
             return "redirect:/login";
         }
         model.addAttribute("categories", categoryService.listActiveCategories());
+        model.addAttribute("loggedIn", true);
         return "pages/donation-publish";
     }
 
@@ -96,6 +98,8 @@ public class WebDonationController {
             return "redirect:/login";
         }
         model.addAttribute("items", donationService.listDonorItems(userId));
+        model.addAttribute("donorRecords", donationService.listDonorRecords(userId));
+        model.addAttribute("loggedIn", true);
         return "pages/donation-my";
     }
 
@@ -141,7 +145,8 @@ public class WebDonationController {
         if (userId == null) {
             return "redirect:/login";
         }
-        model.addAttribute("records", donationService.listUserRecords(userId));
+        model.addAttribute("records", donationService.listClaimerRecords(userId));
+        model.addAttribute("loggedIn", true);
         return "pages/donation-records";
     }
 
@@ -176,7 +181,7 @@ public class WebDonationController {
         } catch (BusinessException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
         }
-        return "redirect:/donation-records";
+        return "redirect:/donations/my";
     }
 
     @PostMapping("/donation-records/{recordId}/reject")
@@ -193,7 +198,7 @@ public class WebDonationController {
         } catch (BusinessException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
         }
-        return "redirect:/donation-records";
+        return "redirect:/donations/my";
     }
 
     @PostMapping("/donation-records/{recordId}/complete")

@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>缂備礁顦遍崰鏇犵矈閿旂偓瀚氶柨鏃囨閸?- 闂佸搫绉埀顒冩珪閻ゎ喖霉濠婂啯婀板褎绮嶇粋宥夊Χ閸℃﹩娼ㄥΔ鐘靛仜閸熻儻銇?/title>
+    <title>租赁物品详情 - 校园二手商城</title>
     <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
@@ -14,62 +14,80 @@
     <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
     <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
-    <div class="card panel-card border-0 shadow-sm overflow-hidden">
-        <div class="row g-0">
-            <div class="col-md-5">
-                <img th:src="${item.coverImageUrl != null ? item.coverImageUrl : '/images/default-goods.svg'}"
-                     class="img-fluid detail-cover"
-                     alt="租赁物品封面">
+    <section class="detail-shell row g-4 align-items-start">
+        <div class="col-lg-7">
+            <div class="card panel-card border-0 shadow-sm overflow-hidden">
+                <div class="card-body p-3 p-md-4">
+                    <img th:src="${item.coverImageUrl != null ? item.coverImageUrl : '/images/default-goods.svg'}"
+                         class="img-fluid detail-cover rounded-4"
+                         alt="租赁物品封面">
+                </div>
             </div>
-            <div class="col-md-7">
+
+            <div class="card panel-card border-0 shadow-sm mt-4">
                 <div class="card-body p-4 p-md-5">
-                    <h2 class="mb-2" th:text="${item.title}"></h2>
-                    <div class="d-flex flex-wrap gap-2 mb-3">
+                    <div class="section-head mb-3">
+                        <div>
+                            <h2 class="section-title mb-1">物品说明</h2>
+                            <p class="section-subtitle mb-0">确认租金、押金、联系人和租期安排后再提交租赁申请。</p>
+                        </div>
+                    </div>
+                    <div class="detail-description"
+                         th:text="${item.description != null and item.description != '' ? item.description : '发布者暂未填写详细说明。'}"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card panel-card border-0 shadow-sm detail-summary-card">
+                <div class="card-body p-4 p-md-5">
+                    <div class="detail-badges d-flex flex-wrap gap-2 mb-3">
                         <span class="badge text-bg-light" th:text="${item.categoryName}"></span>
                         <span class="badge"
                               th:classappend="${item.status == 'AVAILABLE' ? ' text-bg-success' : ' text-bg-secondary'}"
-                              th:text="${item.status == 'AVAILABLE' ? '闂佸憡鐟崹鎶斤綖閵堝洦灏? : (item.status == 'RENTING' ? '缂備礁顦遍崰鏇犵矈閿旂晫鈻? : '閻庤鐡曞鎾剁箔閸涙潙鍑?)}"></span>
+                              th:text="${item.status == 'AVAILABLE' ? '可租赁' : (item.status == 'RENTING' ? '租赁中' : '已下架')}"></span>
                     </div>
 
-                    <p class="price-text fs-4 mb-1" th:text="${'闂佸搫鍟ㄩ崕鎶斤綖?婵? + item.dailyRent}"></p>
-                    <p class="text-secondary mb-3" th:text="${'闂佺娉涢妶鎼佸闯?婵? + item.deposit}"></p>
+                    <h1 class="detail-title mb-2" th:text="${item.title}"></h1>
+                    <div class="price-text detail-price-block mb-2" th:text="${'¥' + item.dailyRent + '/天'}"></div>
+                    <p class="text-secondary mb-4" th:text="${'押金：¥' + item.deposit}"></p>
 
-                    <div class="info-list mb-3">
-                        <p><strong>闂佸憡鍨煎▍锝夛綖閵堝妫橀柣褍鎽滅粣?/strong><span th:text="${item.ownerName}"></span></p>
-                        <p><strong>闂佽壈椴稿濠氭焾閹绢喖妫橀柣鐔稿绾偓闂?/strong><span th:text="${item.contactInfo}"></span></p>
+                    <div class="info-list detail-info-list mb-4">
+                        <p><strong>发布者</strong><span th:text="${item.ownerName}"></span></p>
+                        <p><strong>联系方式</strong><span th:text="${item.contactInfo}"></span></p>
                     </div>
 
-                    <div class="bg-light rounded-3 p-3 mb-4">
-                        <div class="small text-secondary mb-1">缂備礁顦遍崰鏇犵矈閿旂偓瀚氶悗娑櫳戦～?/div>
-                        <div th:text="${item.description != null ? item.description : '闂佸搫妫楅崐鐟拔涢妶鍥ㄥ珰閻庢稒蓱椤?}"></div>
+                    <div class="d-grid gap-2 mb-4" th:if="${loggedIn and session.LOGIN_USER_ID != item.ownerId}">
+                        <a class="btn btn-outline-primary"
+                           th:href="@{'/chat?peerUserId=' + ${item.ownerId}}">联系出租方</a>
                     </div>
 
-                    <form method="post" th:action="@{'/rentals/' + ${item.id} + '/order'}" class="row g-2">
-                        <div class="col-md-4">
-                            <label class="form-label">閻庢鍠掗崑鎾斥攽椤旂⒈鍎愭俊顐熸櫊瀵?/label>
+                    <form method="post" th:action="@{'/rentals/' + ${item.id} + '/order'}" class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">开始日期</label>
                             <input class="form-control" type="date" name="startDate" required>
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label">缂傚倷鐒﹂幐璇差焽椤愶箑绫嶉柕澶涢檮閸?/label>
+                        <div class="col-md-6">
+                            <label class="form-label">结束日期</label>
                             <input class="form-control" type="date" name="endDate" required>
                         </div>
-                        <div class="col-md-12">
-                            <label class="form-label">婵犮垼娉涘ú锕傚极閻愮儤鏅柛顐ｇ箓鐠佹煡姊洪銏╂缂?/label>
+                        <div class="col-12">
+                            <label class="form-label">备注说明</label>
                             <input class="form-control" type="text" maxlength="255" name="renterRemark"
-                                   placeholder="例如：希望在周五下午取货，可在教学楼东门交接">
+                                   placeholder="例如：希望周五下午取件，可在教学楼东门交接">
                         </div>
-                        <div class="col-md-12 d-flex gap-2 mt-2">
+                        <div class="col-12 d-grid gap-2">
                             <button class="btn btn-primary"
                                     type="submit"
                                     th:disabled="${item.status != 'AVAILABLE'}"
-                                    th:text="${item.status == 'AVAILABLE' ? '闂佸湱绮崝鎺戭潩閿斿墽鐭撻柣鏃囧吹閵堬箓鎮规担闈涚仼鐎? : '閻熸粎澧楅幐鍛婃櫠閻樺磭鈻旂€广儱鎳庣拋鎻掆槈閹炬剚鍎忕€?}"></button>
-                            <a class="btn btn-outline-secondary" th:href="@{/rentals}">闁哄鏅滈弻銊ッ洪弽顓炵婵°倕瀚ㄩ埀?/a>
+                                    th:text="${item.status == 'AVAILABLE' ? '提交租赁申请' : '当前不可租赁'}"></button>
+                            <a class="btn btn-outline-secondary" th:href="@{/rentals}">返回租赁市场</a>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 </main>
 </body>
 </html>

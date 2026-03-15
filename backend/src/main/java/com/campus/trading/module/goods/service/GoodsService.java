@@ -15,6 +15,8 @@ public interface GoodsService {
 
     GoodsDetailResponse getGoodsDetailForViewer(Long goodsId, Long viewerUserId);
 
+    GoodsDetailResponse getGoodsDetailForAdmin(Long goodsId);
+
     GoodsDetailResponse createGoods(Long sellerId, GoodsSaveRequest request);
 
     GoodsDetailResponse updateGoods(Long sellerId, Long goodsId, GoodsSaveRequest request);

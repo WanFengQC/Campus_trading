@@ -92,6 +92,27 @@ body {
     z-index: 1110;
 }
 
+.account-dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.account-dropdown-trigger::after {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(45deg) translateY(-1px);
+    transition: transform 0.18s ease;
+}
+
+.account-dropdown:hover .account-dropdown-trigger::after,
+.account-dropdown:focus-within .account-dropdown-trigger::after {
+    transform: rotate(-135deg) translateY(-1px);
+}
+
 .account-dropdown-menu {
     position: absolute;
     top: calc(100% + 0.55rem);
@@ -143,6 +164,26 @@ body {
     background: rgba(44, 62, 80, 0.08);
     color: #22313f;
     font-weight: 700;
+}
+
+.account-dropdown-form {
+    margin: 0;
+}
+
+.account-dropdown-form .account-dropdown-item {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    text-align: left;
+}
+
+.account-dropdown-item--danger {
+    color: #dc2626;
+}
+
+.account-dropdown-item--danger:hover {
+    background: #fef2f2;
+    color: #b91c1c;
 }
 
 .admin-topbar {
@@ -513,10 +554,26 @@ body {
     background: radial-gradient(circle at top right, #e8f0ff 0%, #eef3ff 45%, #f8fafc 100%);
 }
 
+.auth-bg--minimal {
+    background:
+        radial-gradient(720px 320px at 50% -8%, rgba(79, 125, 255, 0.12) 0%, transparent 72%),
+        linear-gradient(180deg, #f7f9fc 0%, #eef3f8 100%);
+}
+
 .auth-shell {
     min-height: 100vh;
     display: flex;
     align-items: center;
+}
+
+.auth-shell--minimal {
+    justify-content: center;
+}
+
+.auth-shell--minimal > .row {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 .auth-aside {
@@ -595,9 +652,65 @@ body {
     box-shadow: 0 24px 48px rgba(44, 62, 80, 0.12) !important;
 }
 
+.auth-card--minimal {
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 16px 36px rgba(31, 47, 74, 0.08) !important;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
 .auth-form .form-control {
     border-radius: 14px;
     min-height: 54px;
+}
+
+.auth-form--minimal .form-label {
+    margin-bottom: 0.45rem;
+    color: #334155;
+    font-weight: 600;
+}
+
+.auth-form--minimal .form-control {
+    min-height: 52px;
+    border-radius: 12px;
+    border: 1px solid #d9e2ec;
+    box-shadow: none;
+}
+
+.auth-form--minimal .form-control:focus {
+    border-color: #9fb3c8;
+    box-shadow: 0 0 0 0.18rem rgba(79, 125, 255, 0.12);
+}
+
+.auth-minimal-head {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.auth-kicker--minimal {
+    margin-bottom: 0.75rem;
+    color: #5f7391;
+    letter-spacing: 0.06em;
+}
+
+.auth-minimal-title {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.auth-minimal-copy {
+    margin: 0.7rem 0 0;
+    color: #64748b;
+    line-height: 1.75;
+}
+
+.auth-submit-btn {
+    min-height: 52px;
+    border-radius: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
 }
 
 .auth-link-row {
@@ -611,6 +724,28 @@ body {
 .auth-link-row a {
     font-weight: 700;
     text-decoration: none;
+}
+
+.auth-link-row--minimal {
+    color: #6b7280;
+}
+
+.auth-admin-entry {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.auth-admin-entry .btn-link {
+    color: #64748b;
+    text-decoration: none;
+}
+
+.auth-admin-entry .btn-link:hover {
+    color: #334155;
+    text-decoration: underline;
 }
 
 .avatar-image {
@@ -969,6 +1104,11 @@ body {
     background: #ffffff;
     border-radius: 24px;
     padding: 1.5rem;
+    min-height: 520px;
+    height: 520px;
+    max-height: 520px;
+    display: flex;
+    flex-direction: column;
     box-shadow: 0 28px 60px rgba(15, 23, 42, 0.24);
     border: 1px solid rgba(219, 234, 254, 0.9);
 }
@@ -1022,10 +1162,11 @@ body {
 
 .notice-modal-content {
     margin-top: 1rem;
+    flex: 1 1 auto;
+    min-height: 0;
     color: #334155;
     line-height: 1.9;
     white-space: pre-wrap;
-    max-height: 52vh;
     overflow-y: auto;
     padding-right: 0.25rem;
 }
@@ -1324,6 +1465,9 @@ body {
         margin-top: 5vh;
         padding: 1.1rem;
         border-radius: 18px;
+        min-height: 420px;
+        height: 420px;
+        max-height: 420px;
     }
 
     .notice-modal-title {

@@ -3,41 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>缁狅紕鎮婇崨妯兼瑜?- 閺嶁€虫疮娴滃本澧滄禍銈嗘楠炲啿褰?/title>
+    <title>管理员登录 - 校园二手商城</title>
     <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
-<body class="auth-bg">
-<main class="container py-5 page-main">
+<body class="auth-bg auth-bg--minimal">
+<div class="container py-5 auth-shell auth-shell--minimal">
     <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-4">
-            <div class="card auth-card border-0 shadow-sm">
-                <div class="card-body p-4">
-                    <h3 class="fw-bold mb-2">缁狅紕鎮婇崨妯烘倵閸?/h3>
-                    <p class="text-secondary mb-3">閻ц缍嶉崥搴″讲缁狅紕鎮婇悽銊﹀煕閵嗕礁鍨庣猾姹団偓浣告櫌閸濅椒绗岀拋銏犲礋閵?/p>
+        <div class="col-md-8 col-lg-6 col-xl-5">
+            <div class="card auth-card auth-card--minimal border-0">
+                <div class="card-body p-4 p-md-5">
+                    <div class="auth-minimal-head">
+                        <div class="auth-kicker auth-kicker--minimal">后台管理</div>
+                        <h1 class="auth-minimal-title">管理员登录</h1>
+                        <p class="auth-minimal-copy">登录后台后可统一管理用户、商品、订单、公告和举报信息。</p>
+                    </div>
 
                     <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
-                    <form method="post" th:action="@{/admin/login}">
+                    <form method="post" th:action="@{/admin/login}" class="auth-form auth-form--minimal">
                         <div class="mb-3">
-                            <label class="form-label">缁狅紕鎮婇崨妯垮閸?/label>
-                            <input class="form-control" type="text" name="username" maxlength="64" required>
+                            <label class="form-label">管理员账号</label>
+                            <input class="form-control form-control-lg" type="text" name="username" maxlength="64" required placeholder="请输入管理员账号">
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">鐎靛棛鐖?/label>
-                            <input class="form-control" type="password" name="password" maxlength="64" required>
+                        <div class="mb-4">
+                            <label class="form-label">密码</label>
+                            <input class="form-control form-control-lg" type="password" name="password" maxlength="64" required placeholder="请输入后台密码">
                         </div>
-                        <button class="btn btn-primary w-100" type="submit">閻ц缍嶉崥搴″酱</button>
+                        <button class="btn btn-primary btn-lg w-100 auth-submit-btn" type="submit">登录后台</button>
                     </form>
 
-                    <div class="small text-secondary mt-3">
-                        姒涙顓荤拹锕€褰块敍姝歛dmin`閿涘矂绮拋銈呯槕閻緤绱癭123456`
+                    <div class="small text-secondary text-center mt-4">
+                        如需进入后台，请使用已分配的管理员账号和密码登录。
                     </div>
-                    <a class="btn btn-link px-0 mt-2" th:href="@{/}">鏉╂柨娲栭崜宥呭酱妫ｆ牠銆?/a>
+                    <div class="auth-admin-entry mt-3">
+                        <a class="btn btn-link btn-sm" th:href="@{/}">返回商城</a>
+                        <a class="btn btn-link btn-sm" th:href="@{/login}">切换到用户登录</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</main>
+</div>
 </body>
 </html>

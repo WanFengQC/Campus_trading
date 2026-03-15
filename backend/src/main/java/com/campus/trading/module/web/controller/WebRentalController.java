@@ -52,8 +52,9 @@ public class WebRentalController {
     }
 
     @GetMapping("/rentals/{id}")
-    public String detail(@PathVariable("id") Long id, Model model) {
+    public String detail(@PathVariable("id") Long id, Model model, HttpSession session) {
         model.addAttribute("item", rentalService.getDetail(id));
+        model.addAttribute("loggedIn", getLoginUserId(session) != null);
         return "pages/rental-detail";
     }
 
@@ -63,6 +64,7 @@ public class WebRentalController {
             return "redirect:/login";
         }
         model.addAttribute("categories", categoryService.listActiveCategories());
+        model.addAttribute("loggedIn", true);
         return "pages/rental-publish";
     }
 
@@ -91,7 +93,7 @@ public class WebRentalController {
             request.setContactInfo(contactInfo);
             request.setCoverImageUrl(uploadRentalImageIfPresent(imageFile, userId));
             Long itemId = rentalService.createItem(userId, request).getId();
-            redirectAttributes.addFlashAttribute("successMessage", "租赁商品发布成功");
+            redirectAttributes.addFlashAttribute("successMessage", "租赁物品发布成功");
             return "redirect:/rentals/" + itemId;
         } catch (BusinessException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
@@ -106,6 +108,8 @@ public class WebRentalController {
             return "redirect:/login";
         }
         model.addAttribute("items", rentalService.listOwnerItems(userId));
+        model.addAttribute("ownerOrders", rentalService.listOwnerOrders(userId));
+        model.addAttribute("loggedIn", true);
         return "pages/rental-my";
     }
 
@@ -119,7 +123,7 @@ public class WebRentalController {
         }
         try {
             rentalService.offShelf(userId, id);
-            redirectAttributes.addFlashAttribute("successMessage", "租赁商品已下架");
+            redirectAttributes.addFlashAttribute("successMessage", "租赁物品已下架");
         } catch (BusinessException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
         }
@@ -153,7 +157,8 @@ public class WebRentalController {
         if (userId == null) {
             return "redirect:/login";
         }
-        model.addAttribute("orders", rentalService.listUserOrders(userId));
+        model.addAttribute("orders", rentalService.listRenterOrders(userId));
+        model.addAttribute("loggedIn", true);
         return "pages/rental-orders";
     }
 
@@ -184,11 +189,11 @@ public class WebRentalController {
         }
         try {
             rentalService.ownerConfirm(userId, orderId);
-            redirectAttributes.addFlashAttribute("successMessage", "已确认租赁订单");
+            redirectAttributes.addFlashAttribute("successMessage", "已确认出租");
         } catch (BusinessException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
         }
-        return "redirect:/rental-orders";
+        return "redirect:/rentals/my";
     }
 
     @PostMapping("/rental-orders/{orderId}/complete")

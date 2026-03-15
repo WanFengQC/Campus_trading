@@ -85,49 +85,27 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
+    public GoodsDetailResponse getGoodsDetailForAdmin(Long goodsId) {
+        return buildGoodsDetail(goodsId, null, true);
+    }
+
+    @Override
     public GoodsDetailResponse getGoodsDetailForViewer(Long goodsId, Long viewerUserId) {
+        return buildGoodsDetail(goodsId, viewerUserId, false);
+    }
+
+    private GoodsDetailResponse buildGoodsDetail(Long goodsId, Long viewerUserId, boolean adminView) {
         GoodsEntity goods = goodsMapper.selectById(goodsId);
         if (goods == null) {
             throw new BusinessException("商品不存在");
         }
         boolean isSeller = viewerUserId != null && viewerUserId.equals(goods.getSellerId());
         boolean publiclyVisible = STATUS_ON_SHELF.equals(goods.getStatus()) && AUDIT_APPROVED.equals(goods.getAuditStatus());
-        if (!isSeller && !publiclyVisible) {
+        if (!adminView && !isSeller && !publiclyVisible) {
             throw new BusinessException("商品未通过审核或已下架");
         }
 
-        CategoryEntity category = categoryMapper.selectById(goods.getCategoryId());
-        UserEntity seller = userMapper.selectById(goods.getSellerId());
-        List<String> imageUrls = listGoodsImageUrls(goods.getId());
-        String coverImageUrl = goods.getCoverImageUrl();
-        if (!StringUtils.hasText(coverImageUrl) && !imageUrls.isEmpty()) {
-            coverImageUrl = imageUrls.get(0);
-        }
-        if (imageUrls.isEmpty() && StringUtils.hasText(coverImageUrl)) {
-            imageUrls.add(coverImageUrl);
-        }
-
-        return GoodsDetailResponse.builder()
-            .id(goods.getId())
-            .sellerId(goods.getSellerId())
-            .sellerName(seller == null ? "未知用户"
-                : (StringUtils.hasText(seller.getNickname()) ? seller.getNickname() : seller.getUsername()))
-            .categoryId(goods.getCategoryId())
-            .categoryName(category == null ? "未分类" : category.getName())
-            .title(goods.getTitle())
-            .description(goods.getDescription())
-            .price(goods.getPrice())
-            .conditionLevel(goods.getConditionLevel())
-            .contactInfo(goods.getContactInfo())
-            .coverImageUrl(coverImageUrl)
-            .imageUrls(imageUrls)
-            .status(goods.getStatus())
-            .auditStatus(goods.getAuditStatus())
-            .auditStatusLabel(resolveAuditStatusLabel(goods.getAuditStatus()))
-            .auditNote(goods.getAuditNote())
-            .auditTime(goods.getAuditTime())
-            .createdAt(goods.getCreatedAt())
-            .build();
+        return toGoodsDetail(goods);
     }
 
     @Override
@@ -255,6 +233,41 @@ public class GoodsServiceImpl implements GoodsService {
                 .build());
         }
         return results;
+    }
+
+    private GoodsDetailResponse toGoodsDetail(GoodsEntity goods) {
+        CategoryEntity category = categoryMapper.selectById(goods.getCategoryId());
+        UserEntity seller = userMapper.selectById(goods.getSellerId());
+        List<String> imageUrls = listGoodsImageUrls(goods.getId());
+        String coverImageUrl = goods.getCoverImageUrl();
+        if (!StringUtils.hasText(coverImageUrl) && !imageUrls.isEmpty()) {
+            coverImageUrl = imageUrls.get(0);
+        }
+        if (imageUrls.isEmpty() && StringUtils.hasText(coverImageUrl)) {
+            imageUrls.add(coverImageUrl);
+        }
+
+        return GoodsDetailResponse.builder()
+            .id(goods.getId())
+            .sellerId(goods.getSellerId())
+            .sellerName(seller == null ? "未知用户"
+                : (StringUtils.hasText(seller.getNickname()) ? seller.getNickname() : seller.getUsername()))
+            .categoryId(goods.getCategoryId())
+            .categoryName(category == null ? "未分类" : category.getName())
+            .title(goods.getTitle())
+            .description(goods.getDescription())
+            .price(goods.getPrice())
+            .conditionLevel(goods.getConditionLevel())
+            .contactInfo(goods.getContactInfo())
+            .coverImageUrl(coverImageUrl)
+            .imageUrls(imageUrls)
+            .status(goods.getStatus())
+            .auditStatus(goods.getAuditStatus())
+            .auditStatusLabel(resolveAuditStatusLabel(goods.getAuditStatus()))
+            .auditNote(goods.getAuditNote())
+            .auditTime(goods.getAuditTime())
+            .createdAt(goods.getCreatedAt())
+            .build();
     }
 
     private List<String> listGoodsImageUrls(Long goodsId) {

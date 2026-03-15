@@ -90,25 +90,33 @@
                         </div>
                     </div>
 
+                    <div class="alert alert-warning" th:if="${adminView}">
+                        <div><strong>管理员查看</strong></div>
+                        <div>当前页面为后台查看模式，可查看未通过审核或已下架商品。</div>
+                        <div><strong>审核状态：</strong><span th:text="${goods.auditStatusLabel}"></span></div>
+                        <div><strong>审核说明：</strong><span th:text="${goods.auditNote != null and goods.auditNote != '' ? goods.auditNote : '-'}"></span></div>
+                    </div>
+
                     <div class="detail-actions d-grid gap-2">
-                        <form th:if="${loggedIn}" method="post" th:action="@{/favorites/toggle}">
+                        <form th:if="${loggedIn and !adminView}" method="post" th:action="@{/favorites/toggle}">
                             <input type="hidden" name="goodsId" th:value="${goods.id}">
                             <button class="btn w-100"
                                     th:classappend="${favorited ? ' btn-outline-danger' : ' btn-outline-secondary'}"
                                     type="submit"
                                     th:text="${favorited ? '取消收藏' : '加入收藏'}"></button>
                         </form>
-                        <a th:if="${!loggedIn}" class="btn btn-outline-secondary w-100" th:href="@{/login}">登录后收藏</a>
+                        <a th:if="${!loggedIn and !adminView}" class="btn btn-outline-secondary w-100" th:href="@{/login}">登录后收藏</a>
 
-                        <form method="post" th:action="@{/cart/add}">
+                        <form th:if="${!adminView}" method="post" th:action="@{/cart/add}">
                             <input type="hidden" name="goodsId" th:value="${goods.id}">
                             <button class="btn btn-primary w-100"
                                     type="submit"
                                     th:disabled="${goods.status != 'ON_SHELF'}"
                                     th:text="${goods.status == 'ON_SHELF' ? '加入购物车' : '当前不可购买'}"></button>
                         </form>
-                        <a class="btn btn-outline-primary w-100" th:href="@{'/chat?peerUserId=' + ${goods.sellerId}}">联系卖家</a>
-                        <a class="btn btn-outline-danger w-100" th:href="@{'/reports/create?targetType=GOODS&targetId=' + ${goods.id}}">举报商品</a>
+                        <a th:if="${!adminView}" class="btn btn-outline-primary w-100" th:href="@{'/chat?peerUserId=' + ${goods.sellerId}}">联系卖家</a>
+                        <a th:if="${!adminView}" class="btn btn-outline-danger w-100" th:href="@{'/reports/create?targetType=GOODS&targetId=' + ${goods.id}}">举报商品</a>
+                        <a th:if="${adminView}" class="btn btn-outline-secondary w-100" th:href="@{/admin/goods}">返回商品管理</a>
                         <a class="btn btn-outline-secondary w-100" th:href="@{/goods}">返回商品市场</a>
                     </div>
                 </div>

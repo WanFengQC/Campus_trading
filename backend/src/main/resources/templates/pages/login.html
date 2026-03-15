@@ -7,66 +7,40 @@
     <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
-<body class="auth-bg">
-<div class="container py-5 auth-shell">
-    <div class="row g-4 align-items-stretch justify-content-center">
-        <div class="col-lg-5 d-none d-lg-block">
-            <section class="auth-aside h-100">
-                <div>
-                    <div class="auth-kicker">校园二手商城</div>
-                    <h1 class="auth-title">登录后继续管理商品、订单和个人资料</h1>
-                    <p class="auth-copy">登录后可继续发布商品、查看订单、进入站内私信和个人中心，常用功能都集中在同一个账号中。</p>
-                </div>
-                <div class="auth-feature-list">
-                    <div class="auth-feature-item">
-                        <strong>商品交易</strong>
-                        <span>发布、收藏、下单、订单跟踪集中处理</span>
-                    </div>
-                    <div class="auth-feature-item">
-                        <strong>租赁与捐赠</strong>
-                        <span>按场景分区，避免普通商品与特殊流程混在一起</span>
-                    </div>
-                    <div class="auth-feature-item">
-                        <strong>交易管理</strong>
-                        <span>订单状态、收藏记录和个人资料统一放在账号下管理</span>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <div class="col-md-8 col-lg-5">
-            <div class="card auth-card border-0 shadow-sm">
+<body class="auth-bg auth-bg--minimal">
+<div class="container py-5 auth-shell auth-shell--minimal">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6 col-xl-5">
+            <div class="card auth-card auth-card--minimal border-0">
                 <div class="card-body p-4 p-md-5">
-                    <div class="d-flex justify-content-between align-items-start mb-4">
-                        <div>
-                            <div class="auth-form-kicker">账号登录</div>
-                            <h2 class="mb-1">欢迎回来</h2>
-                            <p class="text-secondary mb-0">使用学号或工号登录，继续你的校园交易。</p>
-                        </div>
-                        <a class="btn btn-outline-secondary btn-sm" th:href="@{/}">返回首页</a>
+                    <div class="auth-minimal-head">
+                        <div class="auth-kicker auth-kicker--minimal">校园二手商城</div>
+                        <h1 class="auth-minimal-title">欢迎回来</h1>
+                        <p class="auth-minimal-copy">使用学号或工号登录，继续你的校园交易。</p>
                     </div>
 
                     <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
                     <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
-                    <form method="post" th:action="@{/login}" class="auth-form">
+                    <form method="post" th:action="@{/login}" class="auth-form auth-form--minimal">
                         <div class="mb-3">
                             <label class="form-label">学号 / 工号</label>
                             <input type="text" class="form-control form-control-lg" name="username" required maxlength="32" placeholder="例如 2023123456">
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label class="form-label">密码</label>
                             <input type="password" class="form-control form-control-lg" name="password" required minlength="6" maxlength="64" placeholder="请输入登录密码">
                         </div>
-                        <button class="btn btn-primary btn-lg w-100" type="submit">登录</button>
+                        <button class="btn btn-primary btn-lg w-100 auth-submit-btn" type="submit">登录</button>
                     </form>
 
-                    <div class="auth-link-row mt-4">
+                    <div class="auth-link-row auth-link-row--minimal mt-4">
                         <span>还没有账号？</span>
                         <a th:href="@{/register}">立即注册</a>
                     </div>
-                    <div class="mt-3">
-                        <a class="btn btn-outline-dark btn-sm" th:href="@{/admin/login}">管理员后台入口</a>
+                    <div class="auth-admin-entry mt-3">
+                        <a class="btn btn-link btn-sm" th:href="@{/}">返回首页</a>
+                        <a class="btn btn-link btn-sm" th:href="@{/admin/login}">管理员入口</a>
                     </div>
                 </div>
             </div>

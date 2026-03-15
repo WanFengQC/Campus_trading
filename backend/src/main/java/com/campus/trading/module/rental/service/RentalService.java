@@ -26,6 +26,10 @@ public interface RentalService {
 
     List<RentalOrderResponse> listUserOrders(Long userId);
 
+    List<RentalOrderResponse> listRenterOrders(Long renterId);
+
+    List<RentalOrderResponse> listOwnerOrders(Long ownerId);
+
     void cancelOrder(Long renterId, Long orderId);
 
     void ownerConfirm(Long ownerId, Long orderId);

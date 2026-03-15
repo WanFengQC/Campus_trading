@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>闂佺懓鐡ㄩ崹鐟扳枔閹寸姷鐭撻柣鏃囧吹閵堬箓鏌涢悢閿嬵棞闁?- 闂佸搫绉埀顒冩珪閻ゎ喖霉濠婂啯婀板褎绮嶇粋宥夊Χ閸℃﹩娼ㄥΔ鐘靛仜閸熻儻銇?/title>
+    <title>我的租赁 - 校园二手商城</title>
     <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
@@ -11,49 +11,119 @@
 <div th:replace="~{fragments/nav :: storeNav('rentals', ${loggedIn})}"></div>
 
 <main class="container py-4 py-md-5 page-main">
-    <h2 class="section-title mb-3">闂佺懓鐡ㄩ崹浣冦亹閸屾粍鏆滈柛鎰典簼閻ｈ京绱掓径灞芥灆缂佷緤绠撳畷顖炲幢濡や焦鍎?/h2>
+    <div class="section-head mb-3">
+        <div>
+            <h2 class="section-title mb-1">我的租赁物品</h2>
+            <p class="section-subtitle mb-0">查看自己发布的租赁物品，并根据当前状态进行管理。待你确认的出租订单会显示在下方。</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a class="btn btn-outline-secondary btn-sm" th:href="@{/rental-orders}">查看租赁记录</a>
+            <a class="btn btn-outline-primary btn-sm" th:href="@{/rentals/publish}">发布租赁物品</a>
+        </div>
+    </div>
+
     <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
     <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div class="card panel-card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+            <h3 class="section-title mb-1">待你处理的租赁订单</h3>
+            <p class="section-subtitle mb-3">这里只显示你作为出租方收到的租赁订单，可直接确认出租。</p>
+
+            <div class="empty-state py-4" th:if="${ownerOrders == null or ownerOrders.isEmpty()}">当前没有你作为出租方收到的租赁订单。</div>
+
+            <div class="d-grid gap-3" th:if="${ownerOrders != null and !ownerOrders.isEmpty()}">
+                <div class="card panel-card border-0 shadow-sm" th:each="order : ${ownerOrders}">
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+                            <div>
+                                <div class="fw-semibold" th:text="${'订单号：' + order.orderNo}"></div>
+                                <div class="small text-secondary">
+                                    <span>你是出租方</span>
+                                    <span class="mx-2">|</span>
+                                    <span th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                                </div>
+                            </div>
+                            <span class="badge order-badge" th:text="${order.statusLabel}"></span>
+                        </div>
+
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-7">
+                                <div class="d-flex align-items-center gap-3">
+                                    <img th:src="${order.rentalCoverImageUrl != null ? order.rentalCoverImageUrl : '/images/default-goods.svg'}"
+                                         class="list-thumb"
+                                         alt="租赁物品封面">
+                                    <div>
+                                        <div class="fw-semibold" th:text="${order.rentalTitle}"></div>
+                                        <div class="small text-secondary">租客：<span th:text="${order.renterName}"></span></div>
+                                        <div class="small text-secondary" th:text="${'租期：' + order.startDate + ' ~ ' + order.endDate}"></div>
+                                        <div class="small text-secondary" th:text="${'日租金：¥' + order.dailyRent + '，押金：¥' + order.deposit}"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="d-flex justify-content-md-end align-items-center gap-2 flex-wrap">
+                                    <div class="price-text me-md-2" th:text="${'¥' + order.totalAmount}"></div>
+                                    <a class="btn btn-sm btn-outline-secondary" th:href="@{'/rentals/' + ${order.rentalItemId}}">查看物品</a>
+                                    <form th:if="${order.status == 'PENDING'}"
+                                          method="post"
+                                          th:action="@{'/rental-orders/' + ${order.orderId} + '/owner-confirm'}">
+                                        <button class="btn btn-sm btn-primary" type="submit">确认出租</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="table-responsive bg-white rounded-3 shadow-sm p-2">
         <table class="table align-middle mb-0">
             <thead>
             <tr>
-                <th>闂佸摜鍠庡Λ妤呭箹?/th>
-                <th>闂佸搫鍟ㄩ崕鎶斤綖?/th>
-                <th>闂佺娉涢妶鎼佸闯?/th>
-                <th>闂佺粯顭堥崺鏍焵?/th>
-                <th class="text-end">闂佺懓鐏濈粔宕囩礊?/th>
+                <th>物品信息</th>
+                <th>日租金</th>
+                <th>押金</th>
+                <th>状态</th>
+                <th>发布时间</th>
+                <th class="text-end">操作</th>
             </tr>
             </thead>
             <tbody>
             <tr th:if="${items.isEmpty()}">
-                <td colspan="5" class="text-center text-secondary py-4">婵炶揪绲挎慨鍓ф崲閺囩偐鏌﹂柍鈺佸暞缁犳帡鏌涘▎鎰仴缂佹棃顥撶划鏃堟偄閼姐們鍋婇梺鍝ュ枎濡骞栬婵?/td>
+                <td colspan="6" class="text-center text-secondary py-4">你还没有发布租赁物品。</td>
             </tr>
             <tr th:each="item : ${items}">
                 <td>
                     <div class="d-flex align-items-center gap-2">
-                        <img th:src="${item.coverImageUrl != null ? item.coverImageUrl : '/images/default-goods.svg'}" class="list-thumb" alt="租赁商品封面">
+                        <img th:src="${item.coverImageUrl != null ? item.coverImageUrl : '/images/default-goods.svg'}"
+                             class="list-thumb"
+                             alt="租赁物品封面">
                         <div>
                             <div class="fw-semibold" th:text="${item.title}"></div>
                             <div class="small text-secondary" th:text="${item.categoryName}"></div>
                         </div>
                     </div>
                 </td>
-                <td class="price-text" th:text="${'婵? + item.dailyRent}"></td>
-                <td th:text="${'婵? + item.deposit}"></td>
+                <td class="price-text" th:text="${'¥' + item.dailyRent + '/天'}"></td>
+                <td th:text="${'¥' + item.deposit}"></td>
                 <td>
                     <span class="badge"
                           th:classappend="${item.status == 'AVAILABLE' ? ' text-bg-success' : (item.status == 'RENTING' ? ' text-bg-warning' : ' text-bg-secondary')}"
-                          th:text="${item.status == 'AVAILABLE' ? '闂佸憡鐟崹鎶斤綖閵堝洦灏? : (item.status == 'RENTING' ? '缂備礁顦遍崰鏇犵矈閿旂晫鈻? : '閻庤鐡曞鎾剁箔閸涙潙鍑?)}"></span>
+                          th:text="${item.status == 'AVAILABLE' ? '可租赁' : (item.status == 'RENTING' ? '租赁中' : '已下架')}"></span>
                 </td>
+                <td th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
                 <td class="text-end">
-                    <a class="btn btn-sm btn-outline-primary" th:href="@{'/rentals/' + ${item.id}}">闁荤姴娴勯梽鍕磿?/a>
-                    <form class="d-inline" method="post" th:action="@{'/rentals/' + ${item.id} + '/off-shelf'}">
-                        <button class="btn btn-sm btn-outline-danger"
-                                type="submit"
-                                th:disabled="${item.status == 'RENTING'}">婵炴垶鎸搁鍡涙倶?/button>
-                    </form>
+                    <div class="d-inline-flex align-items-center gap-2">
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{'/rentals/' + ${item.id}}">查看</a>
+                        <form class="d-inline" method="post" th:action="@{'/rentals/' + ${item.id} + '/off-shelf'}">
+                            <button class="btn btn-sm btn-outline-danger"
+                                    type="submit"
+                                    th:disabled="${item.status == 'RENTING'}">下架</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             </tbody>

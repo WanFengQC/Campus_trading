@@ -53,14 +53,14 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public Long createReport(Long reporterId, String targetType, Long targetId, String reason, String detail) {
         String normalizedTargetType = normalizeTargetType(targetType);
+        if (!TARGET_TYPE_GOODS.equals(normalizedTargetType)) {
+            throw new BusinessException("当前仅支持商品举报");
+        }
         if (targetId == null || targetId <= 0) {
             throw new BusinessException("举报目标不合法");
         }
         if (!StringUtils.hasText(reason)) {
             throw new BusinessException("请填写举报原因");
-        }
-        if (TARGET_TYPE_USER.equals(normalizedTargetType) && reporterId.equals(targetId)) {
-            throw new BusinessException("不能举报自己");
         }
 
         validateTarget(normalizedTargetType, targetId);
@@ -137,23 +137,31 @@ public class ReportServiceImpl implements ReportService {
         }
 
         Map<Long, UserEntity> reporterMap = new HashMap<>();
-        for (UserEntity user : userMapper.selectBatchIds(reporterIds)) {
-            reporterMap.put(user.getId(), user);
+        if (!reporterIds.isEmpty()) {
+            for (UserEntity user : userMapper.selectBatchIds(reporterIds)) {
+                reporterMap.put(user.getId(), user);
+            }
         }
 
         Map<Long, GoodsEntity> goodsMap = new HashMap<>();
-        for (GoodsEntity goods : goodsMapper.selectBatchIds(goodsIds)) {
-            goodsMap.put(goods.getId(), goods);
+        if (!goodsIds.isEmpty()) {
+            for (GoodsEntity goods : goodsMapper.selectBatchIds(goodsIds)) {
+                goodsMap.put(goods.getId(), goods);
+            }
         }
 
         Map<Long, UserEntity> userMap = new HashMap<>();
-        for (UserEntity user : userMapper.selectBatchIds(userIds)) {
-            userMap.put(user.getId(), user);
+        if (!userIds.isEmpty()) {
+            for (UserEntity user : userMapper.selectBatchIds(userIds)) {
+                userMap.put(user.getId(), user);
+            }
         }
 
         Map<Long, TradeOrderEntity> orderMap = new HashMap<>();
-        for (TradeOrderEntity order : tradeOrderMapper.selectBatchIds(orderIds)) {
-            orderMap.put(order.getId(), order);
+        if (!orderIds.isEmpty()) {
+            for (TradeOrderEntity order : tradeOrderMapper.selectBatchIds(orderIds)) {
+                orderMap.put(order.getId(), order);
+            }
         }
 
         for (ReportEntity report : reports) {

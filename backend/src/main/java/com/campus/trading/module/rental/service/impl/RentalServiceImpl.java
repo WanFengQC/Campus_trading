@@ -83,7 +83,7 @@ public class RentalServiceImpl implements RentalService {
     public RentalItemResponse getDetail(Long itemId) {
         RentalItemEntity item = rentalItemMapper.selectById(itemId);
         if (item == null) {
-            throw new BusinessException("租赁商品不存在");
+            throw new BusinessException("租赁物品不存在");
         }
         return toItemResponse(item);
     }
@@ -113,7 +113,7 @@ public class RentalServiceImpl implements RentalService {
     public void offShelf(Long ownerId, Long itemId) {
         RentalItemEntity item = getOwnerItemOrThrow(ownerId, itemId);
         if (ITEM_STATUS_RENTING.equals(item.getStatus())) {
-            throw new BusinessException("租赁中商品不可下架");
+            throw new BusinessException("租赁中的物品不可下架");
         }
         item.setStatus(ITEM_STATUS_OFF_SHELF);
         rentalItemMapper.updateById(item);
@@ -134,13 +134,13 @@ public class RentalServiceImpl implements RentalService {
 
         RentalItemEntity item = rentalItemMapper.selectById(itemId);
         if (item == null) {
-            throw new BusinessException("租赁商品不存在");
+            throw new BusinessException("租赁物品不存在");
         }
         if (renterId.equals(item.getOwnerId())) {
-            throw new BusinessException("不能租赁自己发布的商品");
+            throw new BusinessException("不能租赁自己发布的物品");
         }
         if (!ITEM_STATUS_AVAILABLE.equals(item.getStatus())) {
-            throw new BusinessException("该租赁商品当前不可下单");
+            throw new BusinessException("该租赁物品当前不可下单");
         }
 
         int updated = rentalItemMapper.update(null, new LambdaUpdateWrapper<RentalItemEntity>()
@@ -148,7 +148,7 @@ public class RentalServiceImpl implements RentalService {
             .eq(RentalItemEntity::getId, item.getId())
             .eq(RentalItemEntity::getStatus, ITEM_STATUS_AVAILABLE));
         if (updated != 1) {
-            throw new BusinessException("该租赁商品已被其他用户抢先下单");
+            throw new BusinessException("该租赁物品已被其他用户抢先下单");
         }
 
         long days = ChronoUnit.DAYS.between(startDate, endDate) + 1;
@@ -175,6 +175,26 @@ public class RentalServiceImpl implements RentalService {
         List<RentalOrderEntity> orders = rentalOrderMapper.selectList(new LambdaQueryWrapper<RentalOrderEntity>()
             .and(w -> w.eq(RentalOrderEntity::getRenterId, userId).or().eq(RentalOrderEntity::getOwnerId, userId))
             .orderByDesc(RentalOrderEntity::getCreatedAt));
+        return toOrderResponses(orders, userId);
+    }
+
+    @Override
+    public List<RentalOrderResponse> listRenterOrders(Long renterId) {
+        List<RentalOrderEntity> orders = rentalOrderMapper.selectList(new LambdaQueryWrapper<RentalOrderEntity>()
+            .eq(RentalOrderEntity::getRenterId, renterId)
+            .orderByDesc(RentalOrderEntity::getCreatedAt));
+        return toOrderResponses(orders, renterId);
+    }
+
+    @Override
+    public List<RentalOrderResponse> listOwnerOrders(Long ownerId) {
+        List<RentalOrderEntity> orders = rentalOrderMapper.selectList(new LambdaQueryWrapper<RentalOrderEntity>()
+            .eq(RentalOrderEntity::getOwnerId, ownerId)
+            .orderByDesc(RentalOrderEntity::getCreatedAt));
+        return toOrderResponses(orders, ownerId);
+    }
+
+    private List<RentalOrderResponse> toOrderResponses(List<RentalOrderEntity> orders, Long currentUserId) {
         if (orders.isEmpty()) {
             return new ArrayList<>();
         }
@@ -207,7 +227,7 @@ public class RentalServiceImpl implements RentalService {
                 .orderId(order.getId())
                 .orderNo(order.getOrderNo())
                 .rentalItemId(order.getRentalItemId())
-                .rentalTitle(item == null ? "租赁商品已删除" : item.getTitle())
+                .rentalTitle(item == null ? "租赁物品已删除" : item.getTitle())
                 .rentalCoverImageUrl(item == null ? null : item.getCoverImageUrl())
                 .renterId(order.getRenterId())
                 .renterName(resolveDisplayName(renter))
@@ -221,8 +241,8 @@ public class RentalServiceImpl implements RentalService {
                 .renterRemark(order.getRenterRemark())
                 .status(order.getStatus())
                 .statusLabel(resolveOrderStatusLabel(order.getStatus()))
-                .renterSide(userId.equals(order.getRenterId()))
-                .ownerSide(userId.equals(order.getOwnerId()))
+                .renterSide(currentUserId.equals(order.getRenterId()))
+                .ownerSide(currentUserId.equals(order.getOwnerId()))
                 .createdAt(order.getCreatedAt())
                 .build());
         }
@@ -337,10 +357,10 @@ public class RentalServiceImpl implements RentalService {
     private RentalItemEntity getOwnerItemOrThrow(Long ownerId, Long itemId) {
         RentalItemEntity item = rentalItemMapper.selectById(itemId);
         if (item == null) {
-            throw new BusinessException("租赁商品不存在");
+            throw new BusinessException("租赁物品不存在");
         }
         if (!ownerId.equals(item.getOwnerId())) {
-            throw new BusinessException("无权操作该租赁商品");
+            throw new BusinessException("无权操作该租赁物品");
         }
         return item;
     }

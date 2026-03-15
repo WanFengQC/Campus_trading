@@ -48,6 +48,7 @@ public class WebReviewController {
         if (!"COMPLETED".equals(order.getStatus())) {
             model.addAttribute("errorMessage", "仅已完成订单可评价");
         }
+        model.addAttribute("loggedIn", true);
         return "pages/order-review";
     }
 
@@ -79,6 +80,7 @@ public class WebReviewController {
         }
         model.addAttribute("writtenReviews", reviewService.listUserWrittenReviews(userId));
         model.addAttribute("receivedReviews", reviewService.listUserReceivedReviews(userId));
+        model.addAttribute("loggedIn", true);
         return "pages/review-my";
     }
 

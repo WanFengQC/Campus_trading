@@ -125,7 +125,7 @@ public class WebTradeController {
         if (userId == null) {
             return "redirect:/login";
         }
-        List<OrderItemResponse> orders = tradeOrderService.listUserOrders(userId);
+        List<OrderItemResponse> orders = tradeOrderService.listBuyerOrders(userId);
         List<Long> orderIds = new ArrayList<>();
         for (OrderItemResponse order : orders) {
             orderIds.add(order.getOrderId());
@@ -154,6 +154,7 @@ public class WebTradeController {
             model.addAttribute("order", order);
             model.addAttribute("logs", logs);
             model.addAttribute("reviewed", reviewed);
+            model.addAttribute("loggedIn", true);
             return "pages/order-detail";
         } catch (BusinessException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
@@ -190,11 +191,11 @@ public class WebTradeController {
 
         try {
             tradeOrderService.sellerConfirm(userId, orderId);
-            redirectAttributes.addFlashAttribute("successMessage", "已确认线下交易");
+            redirectAttributes.addFlashAttribute("successMessage", "已确认接单");
         } catch (BusinessException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
         }
-        return "redirect:/orders";
+        return "redirect:/goods/my";
     }
 
     @PostMapping("/orders/{orderId}/buyer-complete")
@@ -230,7 +231,7 @@ public class WebTradeController {
 
         try {
             tradeOrderService.updateMeetup(userId, orderId, meetupTime, meetupLocation, meetupNote);
-            redirectAttributes.addFlashAttribute("successMessage", "验货信息已更新");
+            redirectAttributes.addFlashAttribute("successMessage", "见面信息已更新");
         } catch (BusinessException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
         }

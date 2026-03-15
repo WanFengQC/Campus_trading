@@ -22,6 +22,10 @@ public interface DonationService {
 
     List<DonationRecordResponse> listUserRecords(Long userId);
 
+    List<DonationRecordResponse> listClaimerRecords(Long claimerId);
+
+    List<DonationRecordResponse> listDonorRecords(Long donorId);
+
     void cancelClaim(Long claimerId, Long recordId);
 
     void approveClaim(Long donorId, Long recordId);

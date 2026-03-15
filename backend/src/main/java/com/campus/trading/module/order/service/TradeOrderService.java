@@ -12,6 +12,10 @@ public interface TradeOrderService {
 
     List<OrderItemResponse> listUserOrders(Long userId);
 
+    List<OrderItemResponse> listBuyerOrders(Long buyerId);
+
+    List<OrderItemResponse> listSellerOrders(Long sellerId);
+
     OrderItemResponse getUserOrder(Long userId, Long orderId);
 
     List<OrderLogItemResponse> listOrderLogs(Long userId, Long orderId);

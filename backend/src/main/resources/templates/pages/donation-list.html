@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>闂佺顫夐崝妯肩矉閹烘宓侀柛顭戝枟缁?- 闂佸搫绉埀顒冩珪閻ゎ喖霉濠婂啯婀板褎绮嶇粋宥夊Χ閸℃﹩娼ㄥΔ鐘靛仜閸熻儻銇?/title>
+    <title>捐赠广场 - 校园二手商城</title>
     <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
@@ -14,27 +14,66 @@
     <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
     <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
-    <div class="card panel-card border-0 shadow-sm mb-3">
-        <div class="card-body">
-            <form class="row g-2" method="get" th:action="@{/donations}">
-                <div class="col-md-5">
-                    <input class="form-control" name="keyword" placeholder="搜索捐赠标题、物品关键词或联系人" th:value="${keyword}">
+    <section class="market-hero rounded-4 p-4 p-md-5 mb-4">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-7">
+                <div class="hero-chip hero-chip--dark">捐赠广场</div>
+                <h1 class="market-title mb-3">把闲置物品更顺畅地交给真正需要的人</h1>
+                <p class="market-copy mb-0">
+                    可以先按分类缩小范围，再查看物品说明和取件地点，
+                    让领取和捐赠都更直接清楚。
+                </p>
+            </div>
+            <div class="col-lg-5">
+                <div class="market-stat-grid">
+                    <div class="market-stat-card">
+                        <strong>支持搜索</strong>
+                        <span>关键词、分类、联系人信息</span>
+                    </div>
+                    <div class="market-stat-card">
+                        <strong>支持筛选</strong>
+                        <span>按分类快速找到想领取的物品</span>
+                    </div>
+                    <div class="market-stat-card">
+                        <strong>支持发布</strong>
+                        <span>有可分享的闲置物品可以直接发布</span>
+                    </div>
                 </div>
-                <div class="col-md-5">
-                    <select class="form-select" name="categoryId">
-                        <option value="">闂佺绻堥崝鎴﹀磿閹绢喖绀嗛柛鈩冪懆椤?/option>
+            </div>
+        </div>
+    </section>
+
+    <section class="card panel-card border-0 shadow-sm mb-4 market-filter-card">
+        <div class="card-body p-3 p-md-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <div>
+                    <h2 class="section-title mb-1">筛选捐赠物品</h2>
+                    <p class="section-subtitle mb-0">先按分类缩小范围，再按关键词查找具体物品或联系人。</p>
+                </div>
+                <a class="btn btn-outline-primary btn-sm" th:href="@{/donations/publish}">我要发布</a>
+            </div>
+
+            <form class="row g-2 g-md-3" method="get" th:action="@{/donations}">
+                <div class="col-md-4 col-lg-3">
+                    <label class="form-label small text-secondary">分类</label>
+                    <select class="form-select js-auto-submit-filter" name="categoryId">
+                        <option value="">全部分类</option>
                         <option th:each="category : ${categories}"
                                 th:value="${category.id}"
                                 th:text="${category.name}"
                                 th:selected="${categoryId != null and categoryId == category.id}"></option>
                     </select>
                 </div>
-                <div class="col-md-2 d-grid">
-                    <button class="btn btn-primary" type="submit">缂備焦绋掗惄顖炲焵?/button>
+                <div class="col-md-6 col-lg-7">
+                    <label class="form-label small text-secondary">关键词</label>
+                    <input class="form-control" name="keyword" placeholder="搜索捐赠标题、物品关键词或联系人" th:value="${keyword}">
+                </div>
+                <div class="col-md-2 col-lg-2 d-grid align-self-end">
+                    <button class="btn btn-primary" type="submit">搜索</button>
                 </div>
             </form>
         </div>
-    </div>
+    </section>
 
     <div class="row g-3" th:if="${!items.isEmpty()}">
         <div class="col-md-6 col-lg-4" th:each="item : ${items}">
@@ -45,14 +84,14 @@
                 <div class="card-body d-flex flex-column">
                     <div class="d-flex justify-content-between align-items-center mb-1">
                         <h6 class="card-title mb-0" th:text="${item.title}"></h6>
-                        <span class="badge text-bg-success">闂佸憡鐟崹鐢割敇缂佹﹫绱?/span>
+                        <span class="badge text-bg-success">可认领</span>
                     </div>
-                    <p class="small text-secondary mb-2" th:text="${item.categoryName + ' 閻?闂佸憡鐟﹂崹鐢电博閻戣姤鍤€闁告粌鍟扮粣? + item.donorName}"></p>
+                    <p class="small text-secondary mb-2" th:text="${item.categoryName + ' · 捐赠人：' + item.donorName}"></p>
                     <p class="small text-secondary flex-grow-1"
                        th:text="${item.description != null and item.description.length() > 72 ? #strings.substring(item.description, 0, 72) + '...' : item.description}"></p>
                     <div class="d-flex justify-content-between align-items-center mt-2">
-                        <span class="small text-secondary" th:text="${item.pickupAddress != null ? item.pickupAddress : '缂備焦鍎抽妵妯肩箔閸涙潙纭€闊洦鎸诲▍灞矫瑰┃鍨偓鏍暜閹绢喖鎹堕柟娈垮枛娴?}"></span>
-                        <a class="btn btn-outline-primary btn-sm" th:href="@{'/donations/' + ${item.id}}">闂佸搫琚崕鍐诧耿閸涱垱瀚氶柨鏃囨閸?/a>
+                        <span class="small text-secondary" th:text="${item.pickupAddress != null ? item.pickupAddress : '线下取件地点待协商'}"></span>
+                        <a class="btn btn-outline-primary btn-sm" th:href="@{'/donations/' + ${item.id}}">查看详情</a>
                     </div>
                 </div>
             </div>
@@ -60,7 +99,21 @@
     </div>
 
     <div class="empty-state" th:if="${items.isEmpty()}">
-        闂佸搫妫楅崐鐟拔涢妶澶婄煑妞ゆ牗绻嶉崥鍥涢弶鎸庮棤婵炲牊鍨块獮鎴﹀箛椤栨粠娴勯梺缁樸仜閺呮盯骞栬閺佸秴鐣濋埀顒勫煟閵忋倕瑙﹂幖绮光偓铏珒闂佸搫顦崕鍐诧耿閸涘瓨鍎戦悗锝冨妷閸?    </div>
+        当前没有符合条件的捐赠物品，换个关键词或分类再试。
+    </div>
 </main>
+<script>
+    (function () {
+        const form = document.querySelector(".market-filter-card form");
+        if (!form) {
+            return;
+        }
+        form.querySelectorAll(".js-auto-submit-filter").forEach(function (element) {
+            element.addEventListener("change", function () {
+                form.requestSubmit();
+            });
+        });
+    })();
+</script>
 </body>
 </html>

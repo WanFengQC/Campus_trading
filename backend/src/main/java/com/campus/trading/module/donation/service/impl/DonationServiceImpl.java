@@ -144,6 +144,26 @@ public class DonationServiceImpl implements DonationService {
         List<DonationRecordEntity> records = donationRecordMapper.selectList(new LambdaQueryWrapper<DonationRecordEntity>()
             .and(w -> w.eq(DonationRecordEntity::getDonorId, userId).or().eq(DonationRecordEntity::getClaimerId, userId))
             .orderByDesc(DonationRecordEntity::getCreatedAt));
+        return toRecordResponses(records, userId);
+    }
+
+    @Override
+    public List<DonationRecordResponse> listClaimerRecords(Long claimerId) {
+        List<DonationRecordEntity> records = donationRecordMapper.selectList(new LambdaQueryWrapper<DonationRecordEntity>()
+            .eq(DonationRecordEntity::getClaimerId, claimerId)
+            .orderByDesc(DonationRecordEntity::getCreatedAt));
+        return toRecordResponses(records, claimerId);
+    }
+
+    @Override
+    public List<DonationRecordResponse> listDonorRecords(Long donorId) {
+        List<DonationRecordEntity> records = donationRecordMapper.selectList(new LambdaQueryWrapper<DonationRecordEntity>()
+            .eq(DonationRecordEntity::getDonorId, donorId)
+            .orderByDesc(DonationRecordEntity::getCreatedAt));
+        return toRecordResponses(records, donorId);
+    }
+
+    private List<DonationRecordResponse> toRecordResponses(List<DonationRecordEntity> records, Long currentUserId) {
         if (records.isEmpty()) {
             return new ArrayList<>();
         }
@@ -184,8 +204,8 @@ public class DonationServiceImpl implements DonationService {
                 .claimRemark(record.getClaimRemark())
                 .status(record.getStatus())
                 .statusLabel(resolveRecordStatusLabel(record.getStatus()))
-                .donorSide(userId.equals(record.getDonorId()))
-                .claimerSide(userId.equals(record.getClaimerId()))
+                .donorSide(currentUserId.equals(record.getDonorId()))
+                .claimerSide(currentUserId.equals(record.getClaimerId()))
                 .createdAt(record.getCreatedAt())
                 .build());
         }

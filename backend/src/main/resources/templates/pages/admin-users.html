@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>闂佹椿娼块崝宥夊春濞戞氨涓嶉柨娑樺閸?- 闂佸憡鑹炬姝屻亹閹绢喖绠崇憸宥夊春濡ゅ懎鐭?/title>
+    <title>用户管理 - 校园二手商城</title>
     <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
@@ -11,7 +11,7 @@
 <div th:replace="~{fragments/nav :: adminNav('users', ${adminName})}"></div>
 
 <main class="container py-4 py-md-5 page-main">
-    <h2 class="section-title mb-3">闂佹椿娼块崝宥夊春濞戞氨涓嶉柨娑樺閸?/h2>
+    <h2 class="section-title mb-3">用户管理</h2>
     <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
     <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
@@ -22,7 +22,7 @@
                     <input class="form-control" name="keyword" placeholder="搜索用户名、昵称或学号" th:value="${keyword}">
                 </div>
                 <div class="col-md-2 d-grid">
-                    <button class="btn btn-primary" type="submit">闂佺懓鍚嬬划搴ㄥ磼?/button>
+                    <button class="btn btn-primary" type="submit">搜索</button>
                 </div>
             </form>
         </div>
@@ -32,19 +32,19 @@
         <table class="table align-middle mb-0">
             <thead>
             <tr>
-                <th>缂傚倸鍊归悧鏇°亹?/th>
-                <th>闁诲孩鍐荤粻鎴ｃ亹?閻庤鎮堕崕杈亹?/th>
-                <th>闂佸搫瀚弫姝屸叿</th>
-                <th>闁荤姵鍔х粻鎴ｃ亹閸ф鍋愰柤鍝ヮ暯閸?/th>
-                <th>闁诲骸鍘滈崜婵嬫偋閹惰姤鍋愰柤鍝ヮ暯閸?/th>
-                <th>闁诲骸鍘滈崜婵嬫偋閾忣偄绶為柛銉ｅ妽閺?/th>
-                <th>濠电偛顦崝宀勫船娴犲绫嶉柛顐ｆ礃閿?/th>
-                <th class="text-end">闂佺懓鐏濈粔宕囩礊?/th>
+                <th>ID</th>
+                <th>用户名</th>
+                <th>昵称</th>
+                <th>账号状态</th>
+                <th>审核状态</th>
+                <th>审核说明</th>
+                <th>注册时间</th>
+                <th class="text-end">操作</th>
             </tr>
             </thead>
             <tbody>
             <tr th:if="${users.isEmpty()}">
-                <td colspan="8" class="text-center text-secondary py-4">闂佸搫妫楅崐鐟拔涢妶澶嬪仺闁靛绠戦悡鏇㈡煛娴ｅ搫顣肩€?/td>
+                <td colspan="8" class="text-center text-secondary py-4">当前没有符合条件的用户。</td>
             </tr>
             <tr th:each="item : ${users}">
                 <td th:text="${item.userId}"></td>
@@ -53,7 +53,7 @@
                 <td>
                     <span class="badge"
                           th:classappend="${item.status == 1 ? ' text-bg-success' : ' text-bg-secondary'}"
-                          th:text="${item.status == 1 ? '濠殿喗绻愮徊浠嬫偉? : '缂備礁鍊烽懗鍫曞极?}"></span>
+                          th:text="${item.status == 1 ? '正常' : '已禁用'}"></span>
                 </td>
                 <td>
                     <span class="badge"
@@ -73,22 +73,22 @@
                             <button class="btn btn-sm"
                                     th:classappend="${item.status == 1 ? ' btn-outline-danger' : ' btn-outline-success'}"
                                     type="submit"
-                                    th:text="${item.status == 1 ? '缂備礁鍊烽懗鍫曞极? : '闂佸憡鍑归崹鎶藉极?}"></button>
+                                    th:text="${item.status == 1 ? '禁用' : '启用'}"></button>
                         </form>
 
                         <form class="d-inline" method="post" th:action="@{'/admin/users/' + ${item.userId} + '/audit'}"
                               th:if="${item.auditStatus != 'APPROVED'}">
                             <input type="hidden" name="auditStatus" value="APPROVED">
                             <input type="hidden" name="auditNote" value="审核通过">
-                            <button class="btn btn-sm btn-outline-primary" type="submit">闂備緡鍋呮穱铏规崲?/button>
+                            <button class="btn btn-sm btn-outline-primary" type="submit">通过</button>
                         </form>
 
                         <form class="d-inline" method="post" th:action="@{'/admin/users/' + ${item.userId} + '/audit'}"
                               th:if="${item.auditStatus != 'REJECTED'}">
                             <input type="hidden" name="auditStatus" value="REJECTED">
                             <input class="form-control form-control-sm d-inline-block" style="width: 140px;"
-                                   name="auditNote" maxlength="255" placeholder="婵＄偟鎳撻崯鍨洪弽顓炲偍闁绘棃鏀辩粈鍫ユ煥濞戞澧曠憸鐗堢叀閺屽懏寰勫☉姘鳖槴">
-                            <button class="btn btn-sm btn-outline-warning" type="submit">婵＄偟鎳撻崯鍨?/button>
+                                   name="auditNote" maxlength="255" placeholder="驳回原因">
+                            <button class="btn btn-sm btn-outline-warning" type="submit">驳回</button>
                         </form>
                     </div>
                 </td>

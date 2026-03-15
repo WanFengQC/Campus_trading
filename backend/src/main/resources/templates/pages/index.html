@@ -25,7 +25,6 @@
                     <a class="btn btn-outline-primary" th:href="@{/rentals}">进入租赁市场</a>
                     <a class="btn btn-outline-primary" th:href="@{/donations}">进入捐赠广场</a>
                     <a class="btn btn-outline-secondary" th:href="@{/recommendations}">查看推荐</a>
-                    <a class="btn btn-link" th:if="${loggedIn}" th:href="@{/user/center}">个人中心</a>
                 </div>
             </div>
 
@@ -151,7 +150,6 @@
                         <div class="small text-secondary mt-2 mb-2" th:text="${'发布人：' + notice.publisher}"></div>
                         <div class="text-secondary"
                              th:text="${notice.content != null and notice.content.length() > 90 ? #strings.substring(notice.content, 0, 90) + '...' : notice.content}"></div>
-                        <div class="notice-item-hint">点击查看完整公告</div>
                     </button>
                 </div>
             </div>

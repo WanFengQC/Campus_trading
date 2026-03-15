@@ -15,8 +15,8 @@
         <div class="section-head">
             <div>
                 <div class="hero-chip hero-chip--dark">后台看板</div>
-                <h1 class="market-title mb-3">把核心运营数据集中到一个入口查看</h1>
-                <p class="market-copy mb-0">用户、商品、订单、租赁、捐赠和举报都在后台统一管理，便于演示完整业务闭环。</p>
+                <h1 class="market-title mb-3">集中处理商城运营事务</h1>
+                <p class="market-copy mb-0">在这里可以统一查看和处理用户、商品、订单、租赁、捐赠、举报与公告等后台事务。</p>
             </div>
         </div>
     </section>
@@ -25,8 +25,8 @@
         <div class="col-md-6 col-xl-3">
             <div class="card panel-card border-0 shadow-sm h-100 admin-stat-card">
                 <div class="card-body">
-                    <div class="small text-secondary">用户总数</div>
-                    <div class="fs-2 fw-bold" th:text="${dashboard.totalUserCount}"></div>
+                    <div class="small text-secondary">可领取捐赠物品</div>
+                    <div class="fs-2 fw-bold" th:text="${dashboard.availableDonationCount}"></div>
                 </div>
             </div>
         </div>
@@ -60,8 +60,8 @@
         <div class="col-lg-4">
             <div class="card panel-card border-0 shadow-sm h-100 admin-stat-card">
                 <div class="card-body">
-                    <div class="small text-secondary">可领取捐赠物品</div>
-                    <div class="fs-2 fw-bold" th:text="${dashboard.availableDonationCount}"></div>
+                    <div class="small text-secondary">用户总数</div>
+                    <div class="fs-2 fw-bold" th:text="${dashboard.totalUserCount}"></div>
                 </div>
             </div>
         </div>

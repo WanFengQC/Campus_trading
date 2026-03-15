@@ -3,70 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>娉ㄥ唽 - 鏍″洯浜屾墜鍟嗗煄</title>
+    <title>注册 - 校园二手商城</title>
     <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
-<body class="auth-bg">
-<div class="container py-5 auth-shell">
-    <div class="row g-4 align-items-stretch justify-content-center">
-        <div class="col-lg-5 d-none d-lg-block">
-            <section class="auth-aside h-100 auth-aside--light">
-                <div>
-                    <div class="auth-kicker">鏂扮敤鎴锋敞鍐?/div>
-                    <h1 class="auth-title">鍏堝畬鎴愯处鍙峰垱寤猴紝鍐嶈繘鍏ュ畬鏁寸殑浜ゆ槗娴佺▼</h1>
-                    <p class="auth-copy">浣跨敤瀛﹀彿鎴栧伐鍙锋敞鍐岋紝瀹屾垚鍚庡嵆鍙繘鍏ュ晢鍩庡彂甯冨晢鍝併€佷笅鍗曘€佹煡鐪嬭鍗曞拰绠＄悊涓汉璧勬枡銆?/p>
-                </div>
-                <div class="auth-feature-list">
-                    <div class="auth-feature-item">
-                        <strong>韬唤鏄庣‘</strong>
-                        <span>浠ュ鍙锋垨宸ュ彿浣滀负璐﹀彿锛屾洿璐村悎鏍″洯浜ゆ槗鍦烘櫙鐨勪娇鐢ㄤ範鎯?/span>
-                    </div>
-                    <div class="auth-feature-item">
-                        <strong>璧勬枡鍙畬鍠?/strong>
-                        <span>娉ㄥ唽鍚庡彲鍦ㄤ釜浜轰腑蹇冭ˉ鍏呮樀绉般€佸ご鍍忓拰鏇村淇℃伅</span>
-                    </div>
-                    <div class="auth-feature-item">
-                        <strong>娴佺▼闂幆</strong>
-                        <span>娉ㄥ唽瀹屾垚鍗冲彲鍙戝竷鍟嗗搧銆佷笅鍗曘€佺璧併€佹崘璧犲拰鏌ョ湅璁㈠崟</span>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <div class="col-md-8 col-lg-5">
-            <div class="card auth-card border-0 shadow-sm">
+<body class="auth-bg auth-bg--minimal">
+<div class="container py-5 auth-shell auth-shell--minimal">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6 col-xl-5">
+            <div class="card auth-card auth-card--minimal border-0">
                 <div class="card-body p-4 p-md-5">
-                    <div class="d-flex justify-content-between align-items-start mb-4">
-                        <div>
-                            <div class="auth-form-kicker">鍒涘缓璐﹀彿</div>
-                            <h2 class="mb-1">娉ㄥ唽鏍″洯璐﹀彿</h2>
-                            <p class="text-secondary mb-0">濉啓鍩虹淇℃伅鍚庡嵆鍙櫥褰曞苟杩涘叆涓汉涓績銆?/p>
-                        </div>
-                        <a class="btn btn-outline-secondary btn-sm" th:href="@{/}">杩斿洖棣栭〉</a>
+                    <div class="auth-minimal-head">
+                        <div class="auth-kicker auth-kicker--minimal">校园二手商城</div>
+                        <h1 class="auth-minimal-title">注册校园账号</h1>
+                        <p class="auth-minimal-copy">填写基础信息后即可创建账号，进入你的校园交易空间。</p>
                     </div>
 
                     <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
-                    <form method="post" th:action="@{/register}" class="auth-form">
+                    <form method="post" th:action="@{/register}" class="auth-form auth-form--minimal">
                         <div class="mb-3">
-                            <label class="form-label">瀛﹀彿 / 宸ュ彿</label>
-                            <input type="text" class="form-control form-control-lg" name="username" required minlength="5" maxlength="32" placeholder="璇疯緭鍏ュ鍙锋垨宸ュ彿">
+                            <label class="form-label">学号 / 工号</label>
+                            <input type="text" class="form-control form-control-lg" name="username" required minlength="5" maxlength="32" placeholder="请输入学号或工号">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">鏄电О</label>
-                            <input type="text" class="form-control form-control-lg" name="nickname" maxlength="64" placeholder="渚嬪 寮犱笁">
+                            <label class="form-label">昵称</label>
+                            <input type="text" class="form-control form-control-lg" name="nickname" maxlength="64" placeholder="例如 张三">
                         </div>
                         <div class="mb-4">
-                            <label class="form-label">瀵嗙爜</label>
+                            <label class="form-label">密码</label>
                             <input type="password" class="form-control form-control-lg" name="password" required minlength="6" maxlength="64" placeholder="请设置登录密码">
                         </div>
-                        <button class="btn btn-primary btn-lg w-100" type="submit">娉ㄥ唽璐﹀彿</button>
+                        <button class="btn btn-primary btn-lg w-100 auth-submit-btn" type="submit">注册账号</button>
                     </form>
 
-                    <div class="auth-link-row mt-4">
-                        <span>宸叉湁璐﹀彿锛?/span>
-                        <a th:href="@{/login}">鍘荤櫥褰?/a>
+                    <div class="auth-link-row auth-link-row--minimal mt-4">
+                        <span>已有账号？</span>
+                        <a th:href="@{/login}">去登录</a>
+                    </div>
+                    <div class="auth-admin-entry mt-3">
+                        <a class="btn btn-link btn-sm" th:href="@{/}">返回首页</a>
                     </div>
                 </div>
             </div>

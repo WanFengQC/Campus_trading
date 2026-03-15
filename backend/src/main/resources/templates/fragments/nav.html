@@ -25,15 +25,14 @@
                 <div class="store-nav-account">
                     <div class="account-dropdown" th:if="${isLoggedIn}">
                         <a class="btn btn-sm account-dropdown-trigger"
-                           th:classappend="${active == 'account' or active == 'notices' or active == 'chat' or active == 'recommendations' or active == 'favorites' or active == 'history' or active == 'cart' or active == 'orders'} ? ' btn-secondary' : ' btn-outline-secondary'"
-                           th:href="@{/user/center}">个人中心</a>
+                           th:href="@{/user/center}"
+                           th:classappend="${active == 'account' or active == 'chat' or active == 'recommendations' or active == 'favorites' or active == 'history' or active == 'cart' or active == 'orders'} ? ' btn-secondary' : ' btn-outline-secondary'">
+                            个人中心
+                        </a>
                         <div class="account-dropdown-menu">
                             <a class="account-dropdown-item"
-                               th:classappend="${active == 'account'} ? ' is-active' : ''"
-                               th:href="@{/user/center}">个人中心</a>
-                            <a class="account-dropdown-item"
                                th:classappend="${active == 'orders'} ? ' is-active' : ''"
-                               th:href="@{/orders}">我的订单</a>
+                               th:href="@{/orders}">购买记录</a>
                             <a class="account-dropdown-item"
                                th:classappend="${active == 'cart'} ? ' is-active' : ''"
                                th:href="@{/cart}">购物车</a>
@@ -49,18 +48,14 @@
                             <a class="account-dropdown-item"
                                th:classappend="${active == 'chat'} ? ' is-active' : ''"
                                th:href="@{/chat}">站内私信</a>
-                            <a class="account-dropdown-item"
-                               th:classappend="${active == 'notices'} ? ' is-active' : ''"
-                               th:href="@{/notices}">商城公告</a>
+                            <form method="post" th:action="@{/logout}" class="account-dropdown-form">
+                                <button class="account-dropdown-item account-dropdown-item--danger" type="submit">退出登录</button>
+                            </form>
                         </div>
                     </div>
 
                     <a class="btn btn-sm btn-outline-primary" th:if="${!isLoggedIn}" th:href="@{/login}">登录</a>
                     <a class="btn btn-sm btn-primary" th:if="${!isLoggedIn}" th:href="@{/register}">注册</a>
-
-                    <form th:if="${isLoggedIn}" method="post" th:action="@{/logout}" class="d-inline">
-                        <button class="btn btn-sm btn-outline-danger" type="submit">退出登录</button>
-                    </form>
                 </div>
             </div>
         </div>
@@ -74,7 +69,6 @@
 
             <div class="admin-topbar-panel">
                 <div class="admin-topbar-row">
-                    <span class="store-nav-caption">管理</span>
                     <div class="d-flex flex-wrap gap-2">
                         <a class="btn btn-sm"
                            th:classappend="${active == 'dashboard'} ? ' btn-secondary' : ' btn-outline-secondary'"
@@ -103,13 +97,6 @@
                         <a class="btn btn-sm"
                            th:classappend="${active == 'notices'} ? ' btn-secondary' : ' btn-outline-secondary'"
                            th:href="@{/admin/notices}">公告</a>
-                    </div>
-                </div>
-
-                <div class="admin-topbar-row admin-topbar-row--meta">
-                    <span class="store-nav-caption">当前账号</span>
-                    <div class="d-flex flex-wrap align-items-center gap-2">
-                        <span class="admin-name-badge" th:text="${adminName != null and adminName != '' ? adminName : '管理员'}"></span>
                         <form method="post" th:action="@{/admin/logout}" class="d-inline">
                             <button class="btn btn-sm btn-outline-danger" type="submit">退出</button>
                         </form>

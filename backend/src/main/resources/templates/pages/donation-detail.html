@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>闂佺顫夐崝妯肩矉閹烘梹瀚氶柨鏃囨閸?- 闂佸搫绉埀顒冩珪閻ゎ喖霉濠婂啯婀板褎绮嶇粋宥夊Χ閸℃﹩娼ㄥΔ鐘靛仜閸熻儻銇?/title>
+    <title>捐赠物品详情 - 校园二手商城</title>
     <link rel="stylesheet" th:href="@{/css/vendor/bootswatch-flatly.min.css}">
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
@@ -14,52 +14,67 @@
     <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
     <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
-    <div class="card panel-card border-0 shadow-sm overflow-hidden">
-        <div class="row g-0">
-            <div class="col-md-5">
-                <img th:src="${item.coverImageUrl != null ? item.coverImageUrl : '/images/default-goods.svg'}"
-                     class="img-fluid detail-cover"
-                     alt="捐赠物品封面">
+    <section class="detail-shell row g-4 align-items-start">
+        <div class="col-lg-7">
+            <div class="card panel-card border-0 shadow-sm overflow-hidden">
+                <div class="card-body p-3 p-md-4">
+                    <img th:src="${item.coverImageUrl != null ? item.coverImageUrl : '/images/default-goods.svg'}"
+                         class="img-fluid detail-cover rounded-4"
+                         alt="捐赠物品封面">
+                </div>
             </div>
-            <div class="col-md-7">
+
+            <div class="card panel-card border-0 shadow-sm mt-4">
                 <div class="card-body p-4 p-md-5">
-                    <h2 class="mb-2" th:text="${item.title}"></h2>
-                    <div class="d-flex flex-wrap gap-2 mb-3">
+                    <div class="section-head mb-3">
+                        <div>
+                            <h2 class="section-title mb-1">物品说明</h2>
+                            <p class="section-subtitle mb-0">确认取件方式和物品情况后再提交认领申请。</p>
+                        </div>
+                    </div>
+                    <div class="detail-description"
+                         th:text="${item.description != null and item.description != '' ? item.description : '发布者暂未填写详细说明。'}"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card panel-card border-0 shadow-sm detail-summary-card">
+                <div class="card-body p-4 p-md-5">
+                    <div class="detail-badges d-flex flex-wrap gap-2 mb-3">
                         <span class="badge text-bg-light" th:text="${item.categoryName}"></span>
-                        <span class="badge"
-                              th:classappend="${item.status == 'AVAILABLE' ? ' text-bg-success' : ' text-bg-secondary'}"
-                              th:text="${item.statusLabel}"></span>
+                        <span class="badge order-badge" th:text="${item.statusLabel}"></span>
                     </div>
 
-                    <div class="info-list mb-3">
-                        <p><strong>闂佺顫夐崝妯肩矉閹烘妫橀柣褍鎽滅粣?/strong><span th:text="${item.donorName}"></span></p>
-                        <p><strong>闂佽壈椴稿濠氭焾閹绢喖妫橀柣鐔稿绾偓闂?/strong><span th:text="${item.contactInfo}"></span></p>
-                        <p><strong>婵炲瓨鍤庨崐鏍暜閹绢喖鎹堕柟娈垮枛娴狀垶鏌?/strong><span th:text="${item.pickupAddress != null ? item.pickupAddress : '缂備焦鍎抽妵妯肩箔閸涙潙纭€闊洦鎸诲▍?}"></span></p>
+                    <h1 class="detail-title mb-2" th:text="${item.title}"></h1>
+
+                    <div class="info-list detail-info-list mb-4">
+                        <p><strong>捐赠方</strong><span th:text="${item.donorName}"></span></p>
+                        <p><strong>联系方式</strong><span th:text="${item.contactInfo}"></span></p>
+                        <p><strong>取件地点</strong><span th:text="${item.pickupAddress != null and item.pickupAddress != '' ? item.pickupAddress : '待沟通'}"></span></p>
                     </div>
 
-                    <div class="bg-light rounded-3 p-3 mb-4">
-                        <div class="small text-secondary mb-1">闂佺粯銇涢弲娑㈠箹瑜忛幏鐘碘偓娑櫳戦～?/div>
-                        <div th:text="${item.description != null ? item.description : '闂佸搫妫楅崐鐟拔涢妶鍥ㄥ珰闁挎柨澧介惌搴ㄦ偣閸パ呮憼婵?}"></div>
+                    <div class="d-grid gap-2 mb-4" th:if="${loggedIn and session.LOGIN_USER_ID != item.donorId}">
+                        <a class="btn btn-outline-primary"
+                           th:href="@{'/chat?peerUserId=' + ${item.donorId}}">联系捐赠方</a>
                     </div>
 
-                    <form method="post" th:action="@{'/donations/' + ${item.id} + '/claim'}" class="row g-2">
-                        <div class="col-md-12">
-                            <label class="form-label">闂佹眹鍨归悿鍥敋椤掑倹瀚氶悗娑櫳戦～鏍煥濞戞澧曠憸鐗堢叀閺屽懏寰勫☉姘鳖槴</label>
-                            <input class="form-control" type="text" maxlength="255" name="claimRemark"
-                                   placeholder="例如：希望周三下午在图书馆门口领取，可配合时间">
+                    <form method="post" th:action="@{'/donations/' + ${item.id} + '/claim'}" class="d-grid gap-3">
+                        <div>
+                            <label class="form-label">认领备注</label>
+                            <textarea class="form-control" rows="4" maxlength="255" name="claimRemark"
+                                      placeholder="例如：想自用，可以周三下午到图书馆门口领取"></textarea>
                         </div>
-                        <div class="col-md-12 d-flex gap-2 mt-2">
-                            <button class="btn btn-primary"
-                                    type="submit"
-                                    th:disabled="${item.status != 'AVAILABLE'}"
-                                    th:text="${item.status == 'AVAILABLE' ? '闂佸湱绮崝鎺戭潩閿旂偓濯奸柕鍫濐樈閺嗘瑩鏌ｉ姀鐘垫瀮妞? : '閻熸粎澧楅幐鍛婃櫠閻樺磭鈻旂€广儱鎳庣拋鏌ユ偣娴ｉ潧鈧繈銆?}"></button>
-                            <a class="btn btn-outline-secondary" th:href="@{/donations}">闁哄鏅滈弻銊ッ洪弽顓炵婵°倕瀚ㄩ埀?/a>
-                        </div>
+                        <button class="btn btn-primary"
+                                type="submit"
+                                th:disabled="${item.status != 'AVAILABLE'}"
+                                th:text="${item.status == 'AVAILABLE' ? '提交认领申请' : '当前不可认领'}"></button>
+                        <a class="btn btn-outline-secondary" th:href="@{/donations}">返回捐赠广场</a>
                     </form>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 </main>
 </body>
 </html>
